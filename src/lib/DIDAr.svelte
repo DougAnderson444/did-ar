@@ -1,12 +1,12 @@
 <script lang='ts'>
 	import { onMount } from 'svelte';
-	import { DIDAr } from './didar';
 	import { DIDArConfig } from './DIDArConfig';
 
 	export let config = {dev: true} 
 	export let didar: DIDAr
 
 	onMount(async () => {
+		const { DIDAr } = await import('./didar');
 		didar = new DIDAr(config);
 		// await didar.init();
 	});
