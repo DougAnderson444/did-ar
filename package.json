@@ -4,6 +4,7 @@
 	"private": true,
 	"scripts": {
 		"dev": "vite dev",
+		"arlocal": "npx arlocal",
 		"build": "vite build",
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
@@ -14,6 +15,7 @@
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "next",
 		"@sveltejs/kit": "next",
+		"arlocal": "^1.1.58",
 		"autoprefixer": "^10.4.12",
 		"postcss": "^8.4.17",
 		"prettier": "^2.6.2",
@@ -26,5 +28,8 @@
 		"typescript": "^4.7.4",
 		"vite": "^3.1.0"
 	},
-	"type": "module"
+	"type": "module",
+	"dependencies": {
+		"warp-contracts": "^1.2.12"
+	}
 }
