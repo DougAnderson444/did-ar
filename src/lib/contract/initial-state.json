@@ -7,13 +7,5 @@
 	"keyAgreement": [],
 	"capabilityInvocation": [],
 	"capabilityDelegation": [],
-	"service": [
-		{
-			"id": "did:ar:IDENTIFIER#linked-domain",
-			"type": "LinkedDomains",
-			"serviceEndpoint": {
-				"origins": ["https://foo.example.com", "https://identity.foundation"]
-			}
-		}
-	]
+	"service": []
 }
