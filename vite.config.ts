@@ -8,6 +8,11 @@ const config: UserConfig = {
 		alias: {
 			'@douganderson/did-ar-component': './src/lib/index'
 		}
+	},
+	test: {
+		deps: {
+			inline: ['warp-contracts']
+		}
 	}
 };
 
