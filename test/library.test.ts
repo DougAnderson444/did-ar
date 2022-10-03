@@ -3,10 +3,6 @@ import { WarpFactory, Contract } from 'warp-contracts';
 import ArLocal from 'arlocal';
 
 import { createDidAr } from '$lib/index';
-import initialDidDoc from '$lib/contract/initial-state.json';
-
-import contractSrc from '$lib/contract/example-contract.js?raw';
-import initialState from '$lib/contract/example-contract-state.json';
 
 interface ExampleContractState {
 	counter: number;
