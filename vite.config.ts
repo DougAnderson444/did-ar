@@ -12,7 +12,8 @@ const config: UserConfig = {
 	test: {
 		deps: {
 			inline: ['warp-contracts']
-		}
+		},
+		hookTimeout: 60000
 	}
 };
 
