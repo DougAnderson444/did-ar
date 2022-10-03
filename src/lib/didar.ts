@@ -3,6 +3,7 @@ import type { JWKInterface } from 'arweave/node/lib/wallet';
 
 import initialState from './contract/initial-state.json';
 import contractSrc from './contract/contractSrc.js?raw';
+import { base58btc } from 'multiformats/bases/base58';
 
 export async function createDidAr({ warp, wallet, RSAPublicKey, Ed25519PublicKey }) {
 	let didoc, did, contractTxId;
@@ -25,6 +26,19 @@ export async function createDidAr({ warp, wallet, RSAPublicKey, Ed25519PublicKey
 		};
 	}
 
+	async function generateEd25519VerificationMethod(key: Uint8Array) {
+		// get length of current verificationMethod array
+		didoc = (await warp.contract(contractTxId).readState()).cachedValue.state;
+
+		const length = didoc.verificationMethod.length;
+
+		return {
+			id: `${did}#key-${length}`,
+			type: 'Ed25519VerificationKey2020',
+			controller: did,
+			publicKeyMultibase: base58btc.encode(key)
+		};
+	}
 	let contract;
 
 	// save the DID Doc CRUD program to Arweave as a smart contract
@@ -50,10 +64,10 @@ export async function createDidAr({ warp, wallet, RSAPublicKey, Ed25519PublicKey
 	await contract.writeInteraction({ function: 'create', id: contractTxId });
 
 	const rsaMethod = await generateVerificationMethod(RSAPublicKey);
-	const verificationMethod = [rsaMethod];
-	// console.log({ verificationMethod });
-	//  [rsaMethod];
-	await contract.writeInteraction({ function: 'update', verificationMethod });
+	await contract.writeInteraction({ function: 'update', verificationMethod: [rsaMethod] });
+
+	const ed25519Method = await generateEd25519VerificationMethod(Ed25519PublicKey);
+	await contract.writeInteraction({ function: 'update', verificationMethod: [ed25519Method] });
 
 	return { did, contractTxId };
 }

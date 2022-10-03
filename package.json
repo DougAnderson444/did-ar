@@ -34,6 +34,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"multiformats": "^9.9.0",
 		"warp-contracts": "^1.2.12"
 	}
 }
