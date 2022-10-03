@@ -13,7 +13,7 @@ export async function handle(state, action) {
 
 	if (input.function === 'update') {
 		if (action.input.verificationMethod) {
-			state.verificationMethod = [...action.input.verificationMethod];
+			state.verificationMethod = action.input.verificationMethod;
 		}
 	}
 

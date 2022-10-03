@@ -48,7 +48,7 @@ describe('Testing did:ar:*', () => {
 	it('should properly deploy contract with initial state', async () => {
 		expect((await contract.readState()).cachedValue.state.id).toEqual(did);
 
-		// console.log((await contract.readState()).cachedValue.state);
+		console.log((await contract.readState()).cachedValue.state);
 		// verificationMethod should have 1 item
 		expect((await contract.readState()).cachedValue.state.verificationMethod.length).toEqual(1);
 		// verificationMethod should have id, type, controller, and publicKeyJwk types
