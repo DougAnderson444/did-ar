@@ -3,14 +3,18 @@ export async function handle(state, action) {
 	const input = action.input;
 	const caller = action.caller;
 
-	if (input.function === 'create') {
-		// check if the caller is the owner
-		// if (caller !== SmartWeave.contract.owner) {
-		// 	throw new ContractError('Only the owner can create a claim');
-		// }
+	if (caller !== SmartWeave.contract.owner) {
+		return { state };
+	}
 
-		// set DID id to did:ar:contractTxId by setting state.id to contractTxId
+	if (input.function === 'create' && !state.id) {
 		state.id = `did:ar:${action.input.id}`;
+	}
+
+	if (input.function === 'update') {
+		if (action.input.verificationMethod) {
+			state.verificationMethod = [...action.input.verificationMethod];
+		}
 	}
 
 	return { state };

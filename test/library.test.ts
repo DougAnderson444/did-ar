@@ -32,7 +32,7 @@ describe('Testing did:ar:*', () => {
 		({ did, contractTxId } = await createDidAr({
 			warp,
 			wallet,
-			RSAPublicKey,
+			RSAPublicKey: wallet,
 			Ed25519PublicKey
 		}));
 
@@ -47,5 +47,28 @@ describe('Testing did:ar:*', () => {
 
 	it('should properly deploy contract with initial state', async () => {
 		expect((await contract.readState()).cachedValue.state.id).toEqual(did);
+
+		// console.log((await contract.readState()).cachedValue.state);
+		// verificationMethod should have 1 item
+		expect((await contract.readState()).cachedValue.state.verificationMethod.length).toEqual(1);
+		// verificationMethod should have id, type, controller, and publicKeyJwk types
+		expect((await contract.readState()).cachedValue.state.verificationMethod[0].id).toEqual(
+			`${did}#key-0`
+		);
+		expect((await contract.readState()).cachedValue.state.verificationMethod[0].type).toEqual(
+			'JsonWebKey2020'
+		);
+		expect((await contract.readState()).cachedValue.state.verificationMethod[0].controller).toEqual(
+			did
+		);
+		expect(
+			(await contract.readState()).cachedValue.state.verificationMethod[0].publicKeyJwk.kty
+		).toEqual('RSA');
+		expect(
+			(await contract.readState()).cachedValue.state.verificationMethod[0].publicKeyJwk.e
+		).toEqual('AQAB');
+		expect(
+			(await contract.readState()).cachedValue.state.verificationMethod[0].publicKeyJwk.n
+		).toEqual(wallet.n);
 	});
 });
