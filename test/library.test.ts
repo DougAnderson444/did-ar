@@ -64,7 +64,7 @@ describe('Testing did:ar:*', () => {
 		expect(didDoc.verificationMethod[0].publicKeyJwk.n).toEqual(wallet.n);
 	});
 
-	it('should have a second verificationMethod with publicKeyMultibase matching base58btc.baseEncode(Ed25519PublicKey)', async () => {
+	it('should have a second verificationMethod with publicKey Ed25519PublicKey', async () => {
 		expect(didDoc.verificationMethod[1].publicKeyJwk.kty).toEqual('OKP');
 		expect(didDoc.verificationMethod[1].publicKeyJwk.crv).toEqual('Ed25519');
 		expect(didDoc.verificationMethod[1].publicKeyJwk.x).toEqual(base64url.encode(Ed25519PublicKey));
