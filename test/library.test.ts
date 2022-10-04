@@ -2,7 +2,7 @@ import { describe, it, assert, expect, test, beforeAll, afterAll } from 'vitest'
 import { WarpFactory, Contract } from 'warp-contracts';
 import ArLocal from 'arlocal';
 
-import { createDidAr, didArResolver } from '@peerpiper/did-ar';
+import { createDidAr, updateDidDoc, didArResolver } from '@peerpiper/did-ar';
 import { Resolver } from 'did-resolver';
 
 import { base58btc } from 'multiformats/bases/base58';
@@ -21,6 +21,7 @@ describe('Testing did:ar:*', () => {
 
 	let did, contractTxId, didDoc;
 	let Ed25519PublicKey, encoded;
+	let Ed25519PublicKey2;
 	let resolver;
 
 	beforeAll(async () => {
@@ -28,6 +29,7 @@ describe('Testing did:ar:*', () => {
 		await arlocal.start();
 
 		Ed25519PublicKey = new Uint8Array([0, 1, 2]);
+		Ed25519PublicKey2 = new Uint8Array([3, 4, 5]);
 
 		warp = WarpFactory.forLocal();
 		({ jwk: wallet } = await warp.testing.generateWallet());
@@ -42,9 +44,27 @@ describe('Testing did:ar:*', () => {
 		contract = warp.contract(contractTxId);
 		didDoc = (await contract.readState()).cachedValue.state;
 
+		// shoudl update too
+		didDoc = {
+			...didDoc,
+			verificationMethod: [
+				...didDoc.verificationMethod,
+				{
+					id: `${did}#key-2`,
+					type: 'Ed25519VerificationKey2018',
+					controller: did,
+					publicKeyBase58: base58btc.encode(Ed25519PublicKey2)
+				}
+			]
+		};
+
+		await updateDidDoc({ didDoc, options: { arweaveWallet: wallet } });
+
 		// try DID resolver too
 		const arResolver = didArResolver.getResolver();
 		resolver = new Resolver(arResolver);
+
+		didDoc = (await contract.readState()).cachedValue.state;
 	});
 
 	afterAll(async () => {
