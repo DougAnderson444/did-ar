@@ -24,12 +24,12 @@ export async function handle(state, action) {
 			}
 			state.verificationMethod = action.input.verificationMethod;
 		}
-		state.authentication = action.input.authentication;
-		state.assertionMethod = action.input.assertionMethod;
-		state.keyAgreement = action.input.keyAgreement;
-		state.capabilityInvocation = action.input.capabilityInvocation;
-		state.capabilityDelegation = action.input.capabilityDelegation;
-		state.service = action.input.service;
+		state.authentication = action.input?.authentication || state.authentication;
+		state.assertionMethod = action.input?.assertionMethod || state.assertionMethod;
+		state.keyAgreement = action.input?.keyAgreement || state.keyAgreement;
+		state.capabilityInvocation = action.input?.capabilityInvocation || state.capabilityInvocation;
+		state.capabilityDelegation = action.input?.capabilityDelegation || state.capabilityDelegation;
+		state.service = action.input?.service || state.service;
 	}
 
 	return { state };
