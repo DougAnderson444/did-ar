@@ -6,7 +6,8 @@ const config: UserConfig = {
 	// alias @douganderson/did-ar
 	resolve: {
 		alias: {
-			'@peerpiper/did-ar': './src/lib/index'
+			'@peerpiper/did-ar': './src/lib/index',
+			process: 'process/browser'
 		}
 	},
 	test: {
@@ -14,6 +15,9 @@ const config: UserConfig = {
 			inline: ['warp-contracts']
 		},
 		hookTimeout: 60000
+	},
+	define: {
+		'process.env': {}
 	}
 };
 
