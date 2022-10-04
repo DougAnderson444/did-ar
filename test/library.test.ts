@@ -2,7 +2,9 @@ import { describe, it, assert, expect, test, beforeAll, afterAll } from 'vitest'
 import { WarpFactory, Contract } from 'warp-contracts';
 import ArLocal from 'arlocal';
 
-import { createDidAr } from '$lib/index';
+import { createDidAr, didArResolver } from '@peerpiper/did-ar';
+import { Resolver } from 'did-resolver';
+
 import { base58btc } from 'multiformats/bases/base58';
 import { base64url } from 'multiformats/bases/base64';
 
@@ -19,6 +21,7 @@ describe('Testing did:ar:*', () => {
 
 	let did, contractTxId, didDoc;
 	let Ed25519PublicKey, encoded;
+	let resolver;
 
 	beforeAll(async () => {
 		arlocal = new ArLocal();
@@ -38,6 +41,10 @@ describe('Testing did:ar:*', () => {
 
 		contract = warp.contract(contractTxId);
 		didDoc = (await contract.readState()).cachedValue.state;
+
+		// try DID resolver too
+		const arResolver = didArResolver.getResolver();
+		resolver = new Resolver(arResolver);
 	});
 
 	afterAll(async () => {
@@ -67,5 +74,10 @@ describe('Testing did:ar:*', () => {
 		expect(didDoc.verificationMethod[1].id).toEqual(`${did}#key-1`);
 		// controller should be ${did}
 		expect(didDoc.verificationMethod[1].controller).toEqual(did);
+	});
+
+	it('should resolve via resolver', async () => {
+		// expect resolver(did) to return didDoc
+		expect((await resolver.resolve(did)).didDocument).toEqual(didDoc);
 	});
 });

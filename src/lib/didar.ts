@@ -23,13 +23,13 @@ export async function createDidAr({ warp, wallet, RSAPublicKey, Ed25519PublicKey
 		srcTxId
 	}));
 
-	did = `did:ar:${contractTxId}`;
+	did = warp.environment == 'mainnet' ? `did:ar:${contractTxId}` : `did:arlocal:${contractTxId}`;
 
 	// use warp-contract to update the contract state
 	contract = warp.contract(contractTxId);
 	contract.connect(wallet);
 
-	await contract.writeInteraction({ function: 'create', id: contractTxId });
+	await contract.writeInteraction({ function: 'create', id: did });
 
 	didDoc = (await warp.contract(contractTxId).readState()).cachedValue.state;
 

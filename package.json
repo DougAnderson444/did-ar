@@ -1,5 +1,5 @@
 {
-	"name": "did-ar-component",
+	"name": "@peerpiper/did-ar",
 	"version": "0.0.1",
 	"private": true,
 	"scripts": {
@@ -34,6 +34,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"did-resolver": "^4.0.0",
 		"multiformats": "^9.9.0",
 		"warp-contracts": "^1.2.12"
 	}
