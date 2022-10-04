@@ -13,6 +13,9 @@ const config = {
 	// for more information about preprocessors
 	preprocess: [
 		preprocess({
+			autoPreprocess: {
+				replace: [[/process\.env\.NODE_ENV/g, JSON.stringify(process.env.NODE_ENV)]]
+			},
 			postcss:
 				process.env.NODE_ENV === 'development'
 					? true // use app.css when developing to preview the styles
