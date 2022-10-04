@@ -6,40 +6,7 @@ import contractSrc from './contract/contractSrc.js?raw';
 import { base58btc } from 'multiformats/bases/base58';
 
 export async function createDidAr({ warp, wallet, RSAPublicKey, Ed25519PublicKey }) {
-	let didoc, did, contractTxId;
-
-	async function generateVerificationMethod(key: JWKInterface) {
-		// get length of current verificationMethod array
-		didoc = (await warp.contract(contractTxId).readState()).cachedValue.state;
-
-		const length = didoc.verificationMethod.length;
-
-		return {
-			id: `${did}#key-${length}`,
-			type: 'JsonWebKey2020',
-			controller: did,
-			publicKeyJwk: {
-				kty: 'RSA',
-				e: 'AQAB',
-				n: key.n
-			}
-		};
-	}
-
-	async function generateEd25519VerificationMethod(key: Uint8Array) {
-		// get length of current verificationMethod array
-		didoc = (await warp.contract(contractTxId).readState()).cachedValue.state;
-
-		const length = didoc.verificationMethod.length;
-
-		return {
-			id: `${did}#key-${length}`,
-			type: 'Ed25519VerificationKey2020',
-			controller: did,
-			publicKeyMultibase: base58btc.encode(key)
-		};
-	}
-	let contract;
+	let didDoc, did, contract, contractTxId;
 
 	// save the DID Doc CRUD program to Arweave as a smart contract
 	// get srcTxId
@@ -63,11 +30,72 @@ export async function createDidAr({ warp, wallet, RSAPublicKey, Ed25519PublicKey
 
 	await contract.writeInteraction({ function: 'create', id: contractTxId });
 
-	const rsaMethod = await generateVerificationMethod(RSAPublicKey);
-	await contract.writeInteraction({ function: 'update', verificationMethod: [rsaMethod] });
+	didDoc = (await warp.contract(contractTxId).readState()).cachedValue.state;
 
-	const ed25519Method = await generateEd25519VerificationMethod(Ed25519PublicKey);
-	await contract.writeInteraction({ function: 'update', verificationMethod: [ed25519Method] });
+	const verificationMethods = await generateVerificationMethods({
+		didDoc,
+		keys: [RSAPublicKey, Ed25519PublicKey]
+	});
+
+	await contract.writeInteraction({ function: 'update', verificationMethod: verificationMethods });
 
 	return { did, contractTxId };
+}
+
+export async function generateVerificationMethods({ didDoc, keys }) {
+	const verificationMethods = [];
+
+	for (let i = 0; i < keys.length; i++) {
+		const key = keys[i];
+		const id = `${didDoc.id}#key-${i}`;
+
+		const method = isRSAKey(key)
+			? await generateRSAVerificationMethod({ didDoc, id, key })
+			: await generateEd25519VerificationMethod({ didDoc, id, key });
+		verificationMethods.push(method);
+	}
+
+	return verificationMethods;
+}
+
+async function generateRSAVerificationMethod({
+	didDoc,
+	id,
+	key
+}: {
+	didDoc: any;
+	id: string;
+	key: JWKInterface;
+}) {
+	return {
+		id,
+		type: 'JsonWebKey2020',
+		controller: didDoc.id,
+		publicKeyJwk: {
+			kty: 'RSA',
+			e: 'AQAB',
+			n: key.n
+		}
+	};
+}
+
+async function generateEd25519VerificationMethod({
+	didDoc,
+	id,
+	key
+}: {
+	didDoc: any;
+	id: string;
+	key: Uint8Array;
+}) {
+	return {
+		id,
+		type: 'Ed25519VerificationKey2020',
+		controller: didDoc.id,
+		publicKeyMultibase: base58btc.encode(key)
+	};
+}
+
+function isRSAKey(key: any): boolean {
+	return key.kty === 'RSA';
 }
