@@ -1,5 +1,5 @@
 // https://github.com/decentralized-identity/did-resolver
-import { WarpFactory } from 'warp-contracts';
+// import { WarpFactory } from 'warp-contracts';
 
 export function getResolver() {
 	/**
@@ -19,7 +19,7 @@ export function getResolver() {
 		options: DIDResolutionOptions
 	): Promise<DIDDocument> {
 		console.log(parsed);
-
+		const { WarpFactory } = await import('warp-contracts');
 		let warp = WarpFactory.forMainnet();
 
 		const didDocument = (await warp.contract(parsed.id).readState()).cachedValue.state; // lookup doc
@@ -40,6 +40,7 @@ export function getResolver() {
 		options: DIDResolutionOptions
 	): Promise<DIDDocument> {
 		console.log(parsed);
+		const { WarpFactory } = await import('warp-contracts');
 
 		let warp = WarpFactory.forLocal();
 
