@@ -6,7 +6,7 @@ const config: UserConfig = {
 	// alias @douganderson/did-ar
 	resolve: {
 		alias: {
-			'@peerpiper/did-ar': './src/lib/index',
+			'@peerpiper/did-ar': './src/lib/index.js',
 			process: 'process/browser'
 		}
 	},
