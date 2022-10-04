@@ -13,9 +13,9 @@ export async function createDid({
 }) {
 	const warp = await setUpWarp({ walletAddress: options?.walletAddress });
 
-	const { did, contractTxId } = await createDidAr({
+	const { did, didDoc, contractTxId } = await createDidAr({
 		warp,
-		wallet: option?.arweaveWallet || 'use_wallet',
+		wallet: options?.arweaveWallet || 'use_wallet',
 		RSAPublicKey,
 		Ed25519PublicKey
 	});
@@ -77,8 +77,9 @@ export async function createDidAr({ warp, wallet, RSAPublicKey, Ed25519PublicKey
 	});
 
 	await contract.writeInteraction({ function: 'update', verificationMethod: verificationMethods });
+	didDoc = (await contract.readState()).cachedValue.state;
 
-	return { did, contractTxId };
+	return { did, didDoc, contractTxId };
 }
 
 export async function generateVerificationMethods({ didDoc, publicKeys }) {
