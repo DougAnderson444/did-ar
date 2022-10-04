@@ -2,7 +2,7 @@ import { describe, it, assert, expect, test, beforeAll, afterAll } from 'vitest'
 import { WarpFactory, Contract } from 'warp-contracts';
 import ArLocal from 'arlocal';
 
-import { createDidAr, updateDidDoc, didArResolver } from '@peerpiper/did-ar';
+import { createDid, createDidAr, updateDidDoc, didArResolver } from '$lib';
 import { Resolver } from 'did-resolver';
 
 import { base58btc } from 'multiformats/bases/base58';
