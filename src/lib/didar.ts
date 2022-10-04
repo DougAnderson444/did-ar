@@ -1,10 +1,36 @@
 // import * as WarpSdk from 'warp-contracts';
-import type { JWKInterface } from 'arweave/node/lib/wallet';
+// import type { JWKInterface } from 'arweave/node/lib/wallet';
 
 import initialState from './contract/initial-state.json';
 import contractSrc from './contract/contractSrc.js?raw';
 import { base58btc } from 'multiformats/bases/base58';
 import { base64url } from 'multiformats/bases/base64';
+
+export async function createDid({
+	RSAPublicKey,
+	Ed25519PublicKey,
+	options = { arweaveWallet, walletAddress }
+}) {
+	const { WarpFactory } = await import('warp-contracts/web');
+	let warp =
+		process.env.NODE_ENV == 'development' ? WarpFactory.forLocal() : WarpFactory.forMainnet();
+
+	console.log('environment', warp.environment, { warp });
+
+	const wallet = options?.arweaveWallet || 'use_wallet';
+
+	if (warp.environment == 'local' && options?.walletAddress) {
+		await warp.arweave.api.get(`/mint/${options.walletAddress}/1000000000000000`);
+	}
+
+	const { did, contractTxId } = await createDidAr({
+		warp,
+		wallet,
+		RSAPublicKey,
+		Ed25519PublicKey
+	});
+	return did;
+}
 
 export async function createDidAr({ warp, wallet, RSAPublicKey, Ed25519PublicKey }) {
 	let didDoc, did, contract, contractTxId;
@@ -96,7 +122,7 @@ async function generateEd25519VerificationMethod({
 		publicKeyJwk: {
 			kty: 'OKP',
 			crv: 'Ed25519',
-			x: base64url.encode(key)
+			x: base64url.encode(new Uint8Array(key))
 		}
 	};
 }
