@@ -2,6 +2,14 @@
 
 Enables users to create a [smartweave contract](https://arweave.medium.com/introducing-smartweave-building-smart-contracts-with-arweave-1fc85cb3b632) on [Arweave](https://www.arweave.org/) to store their [Decentralized Identity Document](https://www.w3.org/TR/did-core/) (DID Doc).
 
+## Install
+
+TODO: Package deployed to npm `@peerpiper/did-ar`
+
+```sh
+npm i @peerpiper/did-ar
+```
+
 ## Create DID
 
 Using an Arweave enabled wallet or passed in JWK, pass an RSA JWK and/or Ed25519PublicKey bytes (Uint8Array) to `createDid`, which will create a did and did document saved as the Arweave Smartweave contract state:
