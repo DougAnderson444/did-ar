@@ -11,25 +11,37 @@ export async function createDid({
 	Ed25519PublicKey,
 	options = { arweaveWallet, walletAddress }
 }) {
-	const { WarpFactory } = await import('warp-contracts/web');
-	let warp =
-		process.env.NODE_ENV == 'development' ? WarpFactory.forLocal() : WarpFactory.forMainnet();
-
-	console.log('environment', warp.environment, { warp });
-
-	const wallet = options?.arweaveWallet || 'use_wallet';
-
-	if (warp.environment == 'local' && options?.walletAddress) {
-		await warp.arweave.api.get(`/mint/${options.walletAddress}/1000000000000000`);
-	}
+	const warp = await setUpWarp({ walletAddress: options?.walletAddress });
 
 	const { did, contractTxId } = await createDidAr({
 		warp,
-		wallet,
+		wallet: option?.arweaveWallet || 'use_wallet',
 		RSAPublicKey,
 		Ed25519PublicKey
 	});
 	return did;
+}
+
+async function setUpWarp({ walletAddress = null }) {
+	const { WarpFactory } = await import('warp-contracts');
+	let warp =
+		process.env.NODE_ENV == 'development' ? WarpFactory.forLocal() : WarpFactory.forMainnet();
+
+	if (warp.environment == 'local' && walletAddress) {
+		await warp.arweave.api.get(`/mint/${walletAddress}/1000000000000000`);
+	}
+	return warp;
+}
+
+export async function updateDidDoc({ didDoc, options = { arweaveWallet, walletAddress } }) {
+	const warp = await setUpWarp({ walletAddress: options?.walletAddress });
+	const wallet = options?.arweaveWallet || 'use_wallet';
+	const contract = warp.contract(didDoc.id);
+	contract.connect(wallet);
+	await contract.writeInteraction({
+		function: 'update',
+		...didDoc
+	});
 }
 
 export async function createDidAr({ warp, wallet, RSAPublicKey, Ed25519PublicKey }) {
@@ -106,7 +118,7 @@ async function generateRSAVerificationMethod({
 	};
 }
 
-async function generateEd25519VerificationMethod({
+export async function generateEd25519VerificationMethod({
 	didDoc,
 	id,
 	key
