@@ -4,6 +4,7 @@ import type { JWKInterface } from 'arweave/node/lib/wallet';
 import initialState from './contract/initial-state.json';
 import contractSrc from './contract/contractSrc.js?raw';
 import { base58btc } from 'multiformats/bases/base58';
+import { base64url } from 'multiformats/bases/base64';
 
 export async function createDidAr({ warp, wallet, RSAPublicKey, Ed25519PublicKey }) {
 	let didDoc, did, contract, contractTxId;
@@ -34,7 +35,7 @@ export async function createDidAr({ warp, wallet, RSAPublicKey, Ed25519PublicKey
 
 	const verificationMethods = await generateVerificationMethods({
 		didDoc,
-		keys: [RSAPublicKey, Ed25519PublicKey]
+		publicKeys: [RSAPublicKey, Ed25519PublicKey]
 	});
 
 	await contract.writeInteraction({ function: 'update', verificationMethod: verificationMethods });
@@ -42,11 +43,11 @@ export async function createDidAr({ warp, wallet, RSAPublicKey, Ed25519PublicKey
 	return { did, contractTxId };
 }
 
-export async function generateVerificationMethods({ didDoc, keys }) {
+export async function generateVerificationMethods({ didDoc, publicKeys }) {
 	const verificationMethods = [];
 
-	for (let i = 0; i < keys.length; i++) {
-		const key = keys[i];
+	for (let i = 0; i < publicKeys.length; i++) {
+		const key = publicKeys[i];
 		const id = `${didDoc.id}#key-${i}`;
 
 		const method = isRSAKey(key)
@@ -80,6 +81,27 @@ async function generateRSAVerificationMethod({
 }
 
 async function generateEd25519VerificationMethod({
+	didDoc,
+	id,
+	key
+}: {
+	didDoc: any;
+	id: string;
+	key: Uint8Array;
+}) {
+	return {
+		id,
+		type: 'JsonWebKey2020',
+		controller: didDoc.id,
+		publicKeyJwk: {
+			kty: 'OKP',
+			crv: 'Ed25519',
+			x: base64url.encode(key)
+		}
+	};
+}
+
+async function generateEd25519MultibaseVerificationMethod({
 	didDoc,
 	id,
 	key

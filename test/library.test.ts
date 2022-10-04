@@ -4,10 +4,7 @@ import ArLocal from 'arlocal';
 
 import { createDidAr } from '$lib/index';
 import { base58btc } from 'multiformats/bases/base58';
-
-interface ExampleContractState {
-	counter: number;
-}
+import { base64url } from 'multiformats/bases/base64';
 
 describe('Testing did:ar:*', () => {
 	let wallet;
@@ -20,15 +17,14 @@ describe('Testing did:ar:*', () => {
 
 	let contract: Contract;
 
-	let did, contractTxId;
+	let did, contractTxId, didDoc;
 	let Ed25519PublicKey, encoded;
 
 	beforeAll(async () => {
-		// arlocal = new ArLocal(1810, false);
-		// await arlocal.start();
+		arlocal = new ArLocal();
+		await arlocal.start();
 
 		Ed25519PublicKey = new Uint8Array([0, 1, 2]);
-		encoded = base58btc.encode(Ed25519PublicKey);
 
 		warp = WarpFactory.forLocal();
 		({ jwk: wallet } = await warp.testing.generateWallet());
@@ -41,53 +37,35 @@ describe('Testing did:ar:*', () => {
 		}));
 
 		contract = warp.contract(contractTxId);
+		didDoc = (await contract.readState()).cachedValue.state;
 	});
 
 	afterAll(async () => {
-		// await arlocal.stop();
+		await arlocal.stop();
 	});
 
 	it('should properly deploy contract with initial state', async () => {
-		expect((await contract.readState()).cachedValue.state.id).toEqual(did);
-		expect(encoded).toEqual('z15T');
+		expect(didDoc.id).toEqual(did);
 	});
 
 	it('verificationMethod should have id, type, controller, and publicKeyJwk types', async () => {
-		expect((await contract.readState()).cachedValue.state.verificationMethod[0].id).toEqual(
-			`${did}#key-0`
-		);
-		expect((await contract.readState()).cachedValue.state.verificationMethod[0].type).toEqual(
-			'JsonWebKey2020'
-		);
-		expect((await contract.readState()).cachedValue.state.verificationMethod[0].controller).toEqual(
-			did
-		);
-		expect(
-			(await contract.readState()).cachedValue.state.verificationMethod[0].publicKeyJwk.kty
-		).toEqual('RSA');
-		expect(
-			(await contract.readState()).cachedValue.state.verificationMethod[0].publicKeyJwk.e
-		).toEqual('AQAB');
-		expect(
-			(await contract.readState()).cachedValue.state.verificationMethod[0].publicKeyJwk.n
-		).toEqual(wallet.n);
+		expect(didDoc.verificationMethod[0].id).toEqual(`${did}#key-0`);
+		expect(didDoc.verificationMethod[0].type).toEqual('JsonWebKey2020');
+		expect(didDoc.verificationMethod[0].controller).toEqual(did);
+		expect(didDoc.verificationMethod[0].publicKeyJwk.kty).toEqual('RSA');
+		expect(didDoc.verificationMethod[0].publicKeyJwk.e).toEqual('AQAB');
+		expect(didDoc.verificationMethod[0].publicKeyJwk.n).toEqual(wallet.n);
 	});
 
 	it('should have a second verificationMethod with publicKeyMultibase matching base58btc.baseEncode(Ed25519PublicKey)', async () => {
-		expect(
-			(await contract.readState()).cachedValue.state.verificationMethod[1].publicKeyMultibase
-		).toEqual('z15T');
+		expect(didDoc.verificationMethod[1].publicKeyJwk.kty).toEqual('OKP');
+		expect(didDoc.verificationMethod[1].publicKeyJwk.crv).toEqual('Ed25519');
+		expect(didDoc.verificationMethod[1].publicKeyJwk.x).toEqual(base64url.encode(Ed25519PublicKey));
 		// type should be Ed25519VerificationKey2020
-		expect((await contract.readState()).cachedValue.state.verificationMethod[1].type).toEqual(
-			'Ed25519VerificationKey2020'
-		);
+		expect(didDoc.verificationMethod[1].type).toEqual('JsonWebKey2020');
 		// id should be ${did}#key-1
-		expect((await contract.readState()).cachedValue.state.verificationMethod[1].id).toEqual(
-			`${did}#key-1`
-		);
+		expect(didDoc.verificationMethod[1].id).toEqual(`${did}#key-1`);
 		// controller should be ${did}
-		expect((await contract.readState()).cachedValue.state.verificationMethod[1].controller).toEqual(
-			did
-		);
+		expect(didDoc.verificationMethod[1].controller).toEqual(did);
 	});
 });
