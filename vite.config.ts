@@ -5,13 +5,14 @@ const config: UserConfig = {
 	plugins: [sveltekit()],
 	// alias @douganderson/did-ar
 	resolve: {
+		mainFields: ['browser', 'web', 'module', 'jsnext:main', 'jsnext'],
 		alias: {
-			'@peerpiper/did-ar': './src/lib/index.js',
-			process: 'process/browser'
+			'@peerpiper/did-ar':
+				process.env.NODE_ENV === 'production' ? './src/lib/index.js' : './src/lib/index', // build needs ./src/lib/index.js, but ssr needs ./src/lib/index
+			process: 'process/browser',
+			'warp-contracts':
+				process.env.NODE_ENV === 'development' ? 'warp-contracts/web' : 'warp-contracts'
 		}
-	},
-	build: {
-		sourcemap: true
 	},
 	test: {
 		deps: {
@@ -20,7 +21,19 @@ const config: UserConfig = {
 		hookTimeout: 60000
 	},
 	define: {
-		'process.env': {}
+		'process.env': { NODE_DEBUG: false }
+	},
+	optimizeDeps: {
+		// force these to be pre-bundled
+		// include: ['warp-contracts']
+	},
+	build: {
+		sourcemap: true
+	},
+	server: {
+		fs: {
+			strict: false
+		}
 	}
 };
 
