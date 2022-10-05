@@ -1,5 +1,30 @@
 // https://github.com/decentralized-identity/did-resolver
 // import { WarpFactory } from 'warp-contracts';
+export interface DIDDocumentMetadata extends Extensible {
+	created?: string;
+	updated?: string;
+	deactivated?: boolean;
+	versionId?: string;
+	nextUpdate?: string;
+	nextVersionId?: string;
+	equivalentId?: string;
+	canonicalId?: string;
+}
+
+export type DIDDocument = {
+	'@context'?: 'https://www.w3.org/ns/did/v1' | string | string[];
+	id: string;
+	alsoKnownAs?: string[];
+	controller?: string | string[];
+	verificationMethod?: VerificationMethod[];
+	service?: Service[];
+	/**
+	 * @deprecated
+	 */
+	publicKey?: VerificationMethod[];
+} & {
+	[x in KeyCapabilitySection]?: (string | VerificationMethod)[];
+};
 
 export function getResolver() {
 	/**
@@ -18,8 +43,12 @@ export function getResolver() {
 		didResolver: Resolver,
 		options: DIDResolutionOptions
 	): Promise<DIDDocument> {
-		console.log(parsed);
-		const { WarpFactory } = await import('warp-contracts');
+		const isBrowser = typeof window !== 'undefined' && typeof window.document !== 'undefined';
+
+		const { WarpFactory } =
+			// isBrowser ? await import('warp-contracts/web') :
+			await import('warp-contracts');
+
 		let warp = WarpFactory.forMainnet();
 
 		const didDocument = (await warp.contract(parsed.id).readState()).cachedValue.state; // lookup doc
@@ -39,8 +68,11 @@ export function getResolver() {
 		didResolver: Resolver,
 		options: DIDResolutionOptions
 	): Promise<DIDDocument> {
-		console.log(parsed);
-		const { WarpFactory } = await import('warp-contracts');
+		const isBrowser = typeof window !== 'undefined' && typeof window.document !== 'undefined';
+
+		const { WarpFactory } =
+			// isBrowser ? await import('warp-contracts/web') :
+			await import('warp-contracts');
 
 		let warp = WarpFactory.forLocal();
 
