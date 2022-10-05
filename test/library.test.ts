@@ -5,8 +5,11 @@ import ArLocal from 'arlocal';
 import { createDid, createDidAr, updateDidDoc, didArResolver } from '$lib';
 import { Resolver } from 'did-resolver';
 
-import { base58btc } from 'multiformats/bases/base58';
-import { base64url } from 'multiformats/bases/base64';
+import { base58btc as multibase58btc } from 'multiformats/bases/base58';
+import {
+	encodeURLSafe as base64URLfromBytes
+	// decodeURLSafe as base64URLtoBytes
+} from '@stablelib/base64';
 
 describe('Testing did:ar:*', () => {
 	let wallet;
@@ -28,8 +31,14 @@ describe('Testing did:ar:*', () => {
 		arlocal = new ArLocal();
 		await arlocal.start();
 
-		Ed25519PublicKey = new Uint8Array([0, 1, 2]);
-		Ed25519PublicKey2 = new Uint8Array([3, 4, 5]);
+		Ed25519PublicKey = new Uint8Array([
+			215, 90, 152, 1, 130, 177, 10, 183, 213, 75, 254, 211, 201, 100, 7, 58, 14, 225, 114, 243,
+			218, 166, 35, 37, 175, 2, 26, 104, 247, 7, 81, 26
+		]);
+		Ed25519PublicKey2 = new Uint8Array([
+			215, 90, 152, 1, 130, 177, 10, 183, 213, 75, 254, 211, 201, 100, 7, 58, 14, 225, 114, 243,
+			218, 166, 35, 37, 175, 2, 26, 104, 247, 7, 81, 26
+		]);
 
 		warp = WarpFactory.forLocal();
 		({ jwk: wallet } = await warp.testing.generateWallet());
@@ -44,7 +53,7 @@ describe('Testing did:ar:*', () => {
 		contract = warp.contract(contractTxId);
 		didDoc = (await contract.readState()).cachedValue.state;
 
-		// shoudl update too
+		// should update too
 		didDoc = {
 			...didDoc,
 			verificationMethod: [
@@ -53,7 +62,7 @@ describe('Testing did:ar:*', () => {
 					id: `${did}#key-2`,
 					type: 'Ed25519VerificationKey2018',
 					controller: did,
-					publicKeyBase58: base58btc.encode(Ed25519PublicKey2)
+					publicKeyMultibase: multibase58btc.encode(Ed25519PublicKey2)
 				}
 			]
 		};
@@ -87,7 +96,12 @@ describe('Testing did:ar:*', () => {
 	it('should have a second verificationMethod with publicKey Ed25519PublicKey', async () => {
 		expect(didDoc.verificationMethod[1].publicKeyJwk.kty).toEqual('OKP');
 		expect(didDoc.verificationMethod[1].publicKeyJwk.crv).toEqual('Ed25519');
-		expect(didDoc.verificationMethod[1].publicKeyJwk.x).toEqual(base64url.encode(Ed25519PublicKey));
+		expect(didDoc.verificationMethod[1].publicKeyJwk.x).toEqual(
+			base64URLfromBytes(Ed25519PublicKey)
+		);
+		expect(didDoc.verificationMethod[1].publicKeyJwk.x).toEqual(
+			'11qYAYKxCrfVS_7TyWQHOg7hcvPapiMlrwIaaPcHURo='
+		);
 		// type should be Ed25519VerificationKey2020
 		expect(didDoc.verificationMethod[1].type).toEqual('JsonWebKey2020');
 		// id should be ${did}#key-1
