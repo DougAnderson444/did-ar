@@ -14,7 +14,10 @@ const config = {
 	preprocess: [
 		preprocess({
 			autoPreprocess: {
-				replace: [[/process\.env\.NODE_ENV/g, JSON.stringify(process.env.NODE_ENV)]]
+				replace: [
+					[/process\.env\.NODE_ENV/g, JSON.stringify(process.env.NODE_ENV)],
+					[/process\.env\.NODE_DEBUG/g, false]
+				]
 			},
 			postcss:
 				process.env.NODE_ENV === 'development'

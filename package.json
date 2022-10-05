@@ -1,6 +1,6 @@
 {
 	"name": "@peerpiper/did-ar",
-	"version": "0.0.4",
+	"version": "0.0.5",
 	"scripts": {
 		"dev": "vite dev",
 		"arlocal": "npx arlocal",
@@ -36,8 +36,10 @@
 	"type": "module",
 	"dependencies": {
 		"@stablelib/base64": "^1.0.1",
+		"ardb": "^1.1.10",
 		"did-resolver": "^4.0.0",
 		"multiformats": "^9.9.0",
+		"svelte-json-tree": "^1.0.0",
 		"warp-contracts": "^1.2.12"
 	}
 }

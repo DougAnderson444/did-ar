@@ -1,0 +1,1 @@
+{"version":3,"file":"_page-d86dbbba.js","sources":["../../../../../../src/routes/+page.js"],"sourcesContent":["export const prerender = true;\r\n"],"names":["prerender"],"mappings":"AAAY,MAACA,EAAY"}
