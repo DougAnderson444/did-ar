@@ -6,14 +6,14 @@ export async function handle(state, action) {
 		return { state };
 	}
 
-	if (input.function === 'create' && !state.id) {
-		if (!input.id.startsWith('did:ar')) {
-			throw new ContractError('Invalid ID');
-		}
-		state.id = input.id;
-	}
-
 	if (input.function === 'update') {
+		if (!state.id) {
+			if (!input.id.startsWith('did:ar')) {
+				throw new ContractError('Invalid ID');
+			}
+			state.id = input.id;
+		}
+
 		if (action.input.verificationMethod) {
 			// verify that action.input.verificationMethod is an array
 			if (
