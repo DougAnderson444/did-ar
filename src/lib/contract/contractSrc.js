@@ -7,6 +7,7 @@ export async function handle(state, action) {
 	}
 
 	if (input.function === 'update') {
+		// prevent people from accidentally updating their id
 		if (!state.id) {
 			if (!input.id.startsWith('did:ar')) {
 				throw new ContractError('Invalid ID');
