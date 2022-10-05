@@ -3,8 +3,11 @@
 
 import initialState from './contract/initial-state.json';
 import contractSrc from './contract/contractSrc.js?raw';
-import { base58btc } from 'multiformats/bases/base58';
-import { base64url } from 'multiformats/bases/base64';
+import { base58btc as multibase58btc } from 'multiformats/bases/base58';
+import {
+	encodeURLSafe as base64URLfromBytes
+	// decodeURLSafe as base64URLtoBytes
+} from '@stablelib/base64';
 
 export async function createDid({
 	RSAPublicKey,
@@ -135,7 +138,7 @@ export async function generateEd25519VerificationMethod({
 		publicKeyJwk: {
 			kty: 'OKP',
 			crv: 'Ed25519',
-			x: base64url.encode(new Uint8Array(key))
+			x: base64URLfromBytes(new Uint8Array(key))
 		}
 	};
 }
@@ -153,7 +156,7 @@ async function generateEd25519MultibaseVerificationMethod({
 		id,
 		type: 'Ed25519VerificationKey2020',
 		controller: didDoc.id,
-		publicKeyMultibase: base58btc.encode(key)
+		publicKeyMultibase: multibase58btc.encode(key)
 	};
 }
 
