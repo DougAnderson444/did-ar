@@ -31,7 +31,7 @@ export async function setUpWarp({ local }: { local: boolean } = {}) {
 
 	const isBrowser = typeof window !== 'undefined' && typeof window.document !== 'undefined';
 
-	const { WarpFactory } =	await import('warp-contracts'); // build process needs node version
+	const { WarpFactory } = await import('warp-contracts'); // build process needs node version
 
 	let warp =
 		local || process.env.NODE_ENV == 'development'
@@ -73,9 +73,11 @@ export async function createDidAr({ warp, wallet, RSAPublicKey, Ed25519PublicKey
 
 	// validate srcTx is actually a valid arweave transaction on this network
 	if (srcTx) {
-		const { data } = await warp.arweave.transactions.get(srcTx);
-		console.log({ data });
-		if (!data) srcTx = null;
+		try {
+			const { data } = await warp.arweave.transactions.get(srcTx);
+		} catch (error) {
+			srcTx = null;
+		}
 	}
 
 	const srcTxId = srcTx || (await deploySrcContract({ warp, wallet }));
