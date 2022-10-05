@@ -3,16 +3,19 @@
 	import ResolveDID from './ResolveDID.svelte';
 	import type { ArdbTransaction } from 'ardb/lib/types';
 
-	export let wallet = null;
 	let allContracts: ArdbTransaction[];
 	let makeDid: Function | null;
+	let local;
 
 	onMount(async () => {
+		const urlParams = new URLSearchParams(window.location.search);
+		local = urlParams.get('local') === 'true';
+
 		// import setUpWarp
 		const { setUpWarp } = await import('./didar');
 
 		// call setUpWarp
-		const warp = await setUpWarp();
+		const warp = await setUpWarp({ local });
 		makeDid = (contractTxId: string) =>
 			warp.environment == 'mainnet' ? `did:ar:${contractTxId}` : `did:arlocal:${contractTxId}`;
 

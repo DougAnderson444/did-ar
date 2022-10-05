@@ -12,9 +12,9 @@ import {
 export async function createDid({
 	RSAPublicKey,
 	Ed25519PublicKey,
-	options = { arweaveWallet, walletAddress, srcTx }
+	options = { arweaveWallet, walletAddress, srcTx, local }
 }) {
-	const warp = await setUpWarp({ walletAddress: options?.walletAddress });
+	const warp = await setUpWarp({ walletAddress: options?.walletAddress, local: options?.local });
 
 	const { did, srcTx, contractTxId } = await createDidAr({
 		srcTx: options?.srcTx,
@@ -26,19 +26,20 @@ export async function createDid({
 	return { did, srcTx };
 }
 
-export async function setUpWarp({ walletAddress }: { walletAddress?: null | undefined } = {}) {
+export async function setUpWarp({ local }: { local: boolean } = {}) {
 	// const { WarpFactory } = await import('warp-contracts/web');
 
 	const isBrowser = typeof window !== 'undefined' && typeof window.document !== 'undefined';
 
-	const { WarpFactory } =
-		// isBrowser ? await import('warp-contracts/web') :
-		await import('warp-contracts');
+	const { WarpFactory } =	await import('warp-contracts'); // build process needs node version
 
 	let warp =
-		process.env.NODE_ENV == 'development' ? WarpFactory.forLocal() : WarpFactory.forMainnet();
+		local || process.env.NODE_ENV == 'development'
+			? WarpFactory.forLocal()
+			: WarpFactory.forMainnet();
 
-	if (warp.environment == 'local' && walletAddress) {
+	if (warp.environment == 'local') {
+		const walletAddress = await warp.arweave.wallets.getAddress();
 		await warp.arweave.api.get(`/mint/${walletAddress}/1000000000000000`);
 	}
 	return warp;
