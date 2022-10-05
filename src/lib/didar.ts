@@ -12,21 +12,29 @@ import {
 export async function createDid({
 	RSAPublicKey,
 	Ed25519PublicKey,
-	options = { arweaveWallet, walletAddress }
+	options = { arweaveWallet, walletAddress, srcTx }
 }) {
 	const warp = await setUpWarp({ walletAddress: options?.walletAddress });
 
-	const { did, didDoc, contractTxId } = await createDidAr({
+	const { did, srcTx, contractTxId } = await createDidAr({
+		srcTx: options?.srcTx,
 		warp,
 		wallet: options?.arweaveWallet || 'use_wallet',
 		RSAPublicKey,
 		Ed25519PublicKey
 	});
-	return did;
+	return { did, srcTx };
 }
 
-async function setUpWarp({ walletAddress = null }) {
-	const { WarpFactory } = await import('warp-contracts');
+export async function setUpWarp({ walletAddress }: { walletAddress?: null | undefined } = {}) {
+	// const { WarpFactory } = await import('warp-contracts/web');
+
+	const isBrowser = typeof window !== 'undefined' && typeof window.document !== 'undefined';
+
+	const { WarpFactory } =
+		// isBrowser ? await import('warp-contracts/web') :
+		await import('warp-contracts');
+
 	let warp =
 		process.env.NODE_ENV == 'development' ? WarpFactory.forLocal() : WarpFactory.forMainnet();
 
@@ -47,54 +55,67 @@ export async function updateDidDoc({ didDoc, options = { arweaveWallet, walletAd
 	});
 }
 
-export async function createDidAr({ warp, wallet, RSAPublicKey, Ed25519PublicKey }) {
-	let didDoc, did, contract, contractTxId;
+export async function deploySrcContract({ warp, wallet = 'use_wallet' }) {
+	if (!warp) throw new Error('warp instance is required');
 
-	// save the DID Doc CRUD program to Arweave as a smart contract
-	// get srcTxId
 	const { srcTxId } = await warp.createContract.deploy({
 		wallet,
 		initState: JSON.stringify(initialState),
 		src: contractSrc
 	});
+	console.log({ srcTxId });
+	return srcTxId;
+}
 
-	({ contractTxId } = await warp.createContract.deployFromSourceTx({
+export async function createDidAr({ warp, wallet, RSAPublicKey, Ed25519PublicKey, srcTx = null }) {
+	if (!warp) throw new Error('warp instance is required');
+
+	// validate srcTx is actually a valid arweave transaction on this network
+	if (srcTx) {
+		const { data } = await warp.arweave.transactions.get(srcTx);
+		console.log({ data });
+		if (!data) srcTx = null;
+	}
+
+	const srcTxId = srcTx || (await deploySrcContract({ warp, wallet }));
+
+	const { contractTxId } = await warp.createContract.deployFromSourceTx({
 		wallet,
 		initState: JSON.stringify(initialState),
 		srcTxId
-	}));
+	});
 
-	did = warp.environment == 'mainnet' ? `did:ar:${contractTxId}` : `did:arlocal:${contractTxId}`;
+	const did =
+		warp.environment == 'mainnet' ? `did:ar:${contractTxId}` : `did:arlocal:${contractTxId}`;
 
 	// use warp-contract to update the contract state
-	contract = warp.contract(contractTxId);
+	const contract = warp.contract(contractTxId);
 	contract.connect(wallet);
 
-	await contract.writeInteraction({ function: 'create', id: did });
-
-	didDoc = (await warp.contract(contractTxId).readState()).cachedValue.state;
-
 	const verificationMethods = await generateVerificationMethods({
-		didDoc,
+		did,
 		publicKeys: [RSAPublicKey, Ed25519PublicKey]
 	});
 
-	await contract.writeInteraction({ function: 'update', verificationMethod: verificationMethods });
-	didDoc = (await contract.readState()).cachedValue.state;
+	await contract.writeInteraction({
+		function: 'update',
+		id: did,
+		verificationMethod: verificationMethods
+	});
 
-	return { did, didDoc, contractTxId };
+	return { did, srcTx: srcTxId, contractTxId };
 }
 
-export async function generateVerificationMethods({ didDoc, publicKeys }) {
+export async function generateVerificationMethods({ did, publicKeys }) {
 	const verificationMethods = [];
 
 	for (let i = 0; i < publicKeys.length; i++) {
 		const key = publicKeys[i];
-		const id = `${didDoc.id}#key-${i}`;
+		const id = `${did}#key-${i}`;
 
 		const method = isRSAKey(key)
-			? await generateRSAVerificationMethod({ didDoc, id, key })
-			: await generateEd25519VerificationMethod({ didDoc, id, key });
+			? await generateRSAVerificationMethod({ did, id, key })
+			: await generateEd25519VerificationMethod({ did, id, key });
 		verificationMethods.push(method);
 	}
 
@@ -102,18 +123,18 @@ export async function generateVerificationMethods({ didDoc, publicKeys }) {
 }
 
 async function generateRSAVerificationMethod({
-	didDoc,
+	did,
 	id,
 	key
 }: {
-	didDoc: any;
+	did: string;
 	id: string;
 	key: JWKInterface;
 }) {
 	return {
 		id,
 		type: 'JsonWebKey2020',
-		controller: didDoc.id,
+		controller: did,
 		publicKeyJwk: {
 			kty: 'RSA',
 			e: 'AQAB',
@@ -123,18 +144,18 @@ async function generateRSAVerificationMethod({
 }
 
 export async function generateEd25519VerificationMethod({
-	didDoc,
+	did,
 	id,
 	key
 }: {
-	didDoc: any;
+	did: string;
 	id: string;
 	key: Uint8Array;
 }) {
 	return {
 		id,
 		type: 'JsonWebKey2020',
-		controller: didDoc.id,
+		controller: did,
 		publicKeyJwk: {
 			kty: 'OKP',
 			crv: 'Ed25519',
@@ -144,18 +165,18 @@ export async function generateEd25519VerificationMethod({
 }
 
 async function generateEd25519MultibaseVerificationMethod({
-	didDoc,
+	did,
 	id,
 	key
 }: {
-	didDoc: any;
+	did: string;
 	id: string;
 	key: Uint8Array;
 }) {
 	return {
 		id,
 		type: 'Ed25519VerificationKey2020',
-		controller: didDoc.id,
+		controller: did,
 		publicKeyMultibase: multibase58btc.encode(key)
 	};
 }
