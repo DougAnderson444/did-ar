@@ -12,7 +12,7 @@ npm i @peerpiper/did-ar
 
 ## Create DID
 
-Using an Arweave enabled wallet or passed in JWK, pass an RSA JWK and/or Ed25519PublicKey bytes (Uint8Array) to `createDid`, which will create a did and did document saved as the Arweave Smartweave contract state:
+Using an Arweave enabled wallet or passed in JWK: Pass an RSA Public Key JWK and/or Ed25519PublicKey bytes (Uint8Array) to `createDid`, which will create a did and did document saved as the Arweave Smartweave contract state:
 
 ```js
 import { createDid } from '@peerpiper/did-ar';
@@ -44,19 +44,30 @@ console.log(didDoc.verificationMethod[0].publicKeyJwk); // this did's public key
 
 ## Update DID Document
 
-To update, just pass the new DID Doc to `did-ar`. Then `did:ar` takes the Arweave wallet or JWK in order for the Smart Contract to verify that the wallet owner owns the contract (and by extention the did:ar). If anyone other than the owner of the contract tries to update the did document, the contract will throw a Contract error and not update the contract.
+To update, just pass the new DID Doc to `did-ar` which verifies that the caller is the wallet owner (and by extention the `did:ar` owner). If anyone other than the owner of the contract tries to update the did document, the contract will only return the current DID Doc state.
 
 The contract then replaces the old DID Document with the new one.
+
+Example: Using a arweave wallet like `ArConnect` or [`@peerpiper/web3-wallet-connector`](https://www.npmjs.com/package/@peerpiper/web3-wallet-connector) (recommended):
 
 ```js
 import { updateDidDoc } from '@peerpiper/did-ar';
 
-// using a arweave wallet like `ArConnect` or [`@peerpiper/web3-wallet-connector`](https://www.npmjs.com/package/@peerpiper/web3-wallet-connector):
 updateDidDoc({ didDoc });
+```
 
-// or, old school passing in a private key JWK / for testing:
+Or, pass in a private key JWK for testing:
+
+```js
+import { updateDidDoc } from '@peerpiper/did-ar';
+
+// passing in a private key JWK for testing:
 updateDidDoc({ didDoc, options: { arweaveWallet } });
 ```
+
+## Delete
+
+TODO: Implement [ANS-106 Do Not Store Request](https://github.com/ArweaveTeam/arweave-standards/blob/master/ans/ANS-106.md)
 
 ## Forking The Smart Contract
 
@@ -64,6 +75,6 @@ With Arweave, using Warp Contract's `deployFromSourceTx` you can use an existing
 
 # References
 
-[DID Core](https://w3c.github.io/did-core/)
+[DID Core W3C Reccomendation](https://w3c.github.io/did-core/)
 
-[JOSE RFC](https://www.rfc-editor.org/rfc/rfc8037.html#section-2)
+[JOSE JWK RFC](https://www.rfc-editor.org/rfc/rfc8037.html#section-2)
