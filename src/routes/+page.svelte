@@ -31,14 +31,6 @@
 
 <Web3WalletMenu on:walletReady={walletReady} />
 
-<div class="m-4 p-4">
-	{#if srcTx}
-		Using existing contract <span class="font-mono bg-gray-50 m-2 p-2 rounded">{srcTx}</span>
-	{:else}
-		We will deploy a new Smart Contract to manage your DID.
-	{/if}
-</div>
-
-{#if wallet && RSAPublicKey && Ed25519PublicKey && ready}
+{#if ready}
 	<DIDAr {wallet} {RSAPublicKey} {Ed25519PublicKey} bind:srcTx />
 {/if}
