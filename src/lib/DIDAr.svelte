@@ -3,40 +3,48 @@
 	// @ts-ignore
 	import type { handlers } from '@peerpiper/iframe-wallet-sdk';
 
+	import ListDiDs from './ListDIDs.svelte';
+
 	export let RSAPublicKey: { kty: string; n: string; e: string; kid?: string };
 	export let Ed25519PublicKey: Uint8Array;
 	export let wallet: handlers;
+	export let srcTx: string | null;
 
 	let createDid: Function;
 	let did: string;
 	// fund arlocal for this RSA key address
 	let walletAddress;
 
+	let handleCreateDID: () => Promise<void>;
+
 	onMount(async () => {
 		({ createDid } = await import('./didar'));
+
+		handleCreateDID = async function () {
+			walletAddress = await wallet.arweaveWalletAPI.getActiveAddress();
+
+			({ did, srcTx } = await createDid({
+				RSAPublicKey,
+				Ed25519PublicKey,
+				options: { walletAddress, srcTx }
+			}));
+		};
 	});
-
-	async function handleCreateDID() {
-		walletAddress = await wallet.arweaveWalletAPI.getActiveAddress();
-
-		did = await createDid({
-			RSAPublicKey,
-			Ed25519PublicKey,
-			options: { walletAddress }
-		});
-	}
 </script>
 
-<div
-	class="bg-blue-600 hover:bg-blue-500 shadow rounded-lg m-4 p-4 w-fit text-white cursor-pointer"
-	on:click={handleCreateDID}
->
-	Create Identity on {process.env.NODE_ENV}
-</div>
+{#key wallet}
+	{#key did}
+		<ListDiDs />
+	{/key}
 
-{#if did}
-	<div class="bg-green-600 hover:bg-green-500 shadow rounded-lg m-4 p-4 w-fit text-white">
-		{did}
-	</div>
-{/if}
+	{#if handleCreateDID}
+		<div
+			class="bg-blue-600 hover:bg-blue-500 shadow rounded-lg m-4 p-4 w-fit text-white cursor-pointer"
+			on:click={handleCreateDID}
+		>
+			Use wallet keys to Create new DID Identity, deployed on {process.env.NODE_ENV}
+		</div>
+	{/if}
+{/key}
+
 <!-- <style lang="postcss"></style> -->
