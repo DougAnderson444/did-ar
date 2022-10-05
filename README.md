@@ -1,6 +1,16 @@
 # DID:AR
 
+✔️📇 Your Own Permanent Identity on Web3
+
 Enables users to create a [smartweave contract](https://arweave.medium.com/introducing-smartweave-building-smart-contracts-with-arweave-1fc85cb3b632) on [Arweave](https://www.arweave.org/) to store their [Decentralized Identity Document](https://www.w3.org/TR/did-core/) (DID Doc).
+
+✔️💰 No Tokens / cryptocurrency, thanks to [Bundlr](https://bundlr.network/)!
+
+✔️♾️ Lasts forever, thanks to [Arweave](https://www.arweave.org/)!
+
+✔️💻 Saves to your OWN device!
+
+✔️🗃️ Conveniently Control Your Data
 
 ## Install
 
