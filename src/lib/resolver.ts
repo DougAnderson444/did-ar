@@ -45,9 +45,7 @@ export function getResolver() {
 	): Promise<DIDDocument> {
 		const isBrowser = typeof window !== 'undefined' && typeof window.document !== 'undefined';
 
-		const { WarpFactory } =
-			// isBrowser ? await import('warp-contracts/web') :
-			await import('warp-contracts');
+		const { WarpFactory } = await import('warp-contracts'); // build process needs node version
 
 		let warp = WarpFactory.forMainnet();
 
@@ -70,9 +68,7 @@ export function getResolver() {
 	): Promise<DIDDocument> {
 		const isBrowser = typeof window !== 'undefined' && typeof window.document !== 'undefined';
 
-		const { WarpFactory } =
-			// isBrowser ? await import('warp-contracts/web') :
-			await import('warp-contracts');
+		const { WarpFactory } = await import('warp-contracts'); // build process needs node version
 
 		let warp = WarpFactory.forLocal();
 
