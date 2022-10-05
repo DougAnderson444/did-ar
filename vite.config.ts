@@ -10,6 +10,9 @@ const config: UserConfig = {
 			process: 'process/browser'
 		}
 	},
+	build: {
+		sourcemap: true
+	},
 	test: {
 		deps: {
 			inline: ['warp-contracts']
