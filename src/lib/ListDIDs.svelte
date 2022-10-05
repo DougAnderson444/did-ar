@@ -1,7 +1,9 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, createEventDispatcher } from 'svelte';
 	import ResolveDID from './ResolveDID.svelte';
 	import type { ArdbTransaction } from 'ardb/lib/types';
+
+	const dispatch = createEventDispatcher();
 
 	let allContracts: ArdbTransaction[];
 	let makeDid: Function | null;
@@ -39,6 +41,7 @@
 
 		// log transactions
 		console.log({ allContracts });
+		dispatch('searchComplete', allContracts);
 	});
 </script>
 
@@ -47,7 +50,7 @@
 		<!-- && contract?.verificationMethod?.length -->
 		{#if makeDid && contract.id}
 			<ResolveDID did={makeDid(contract.id)}>
-				<div slot="id">{makeDid(contract.id)}</div>
+				{makeDid(contract.id)}
 				<div slot="timestamp">{new Date(contract.block.timestamp).toLocaleString()}</div>
 			</ResolveDID>
 		{/if}
