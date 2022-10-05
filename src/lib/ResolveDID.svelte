@@ -3,7 +3,6 @@
 
 	import { onMount } from 'svelte';
 	import { Resolver } from 'did-resolver';
-	import { didArResolver } from '.';
 	import JsonTree from 'svelte-json-tree';
 
 	export let did;
@@ -12,6 +11,8 @@
 	let didDocument;
 
 	onMount(async () => {
+		const { didArResolver } = await import('.');
+
 		const arResolver = didArResolver.getResolver();
 		resolver = new Resolver(arResolver);
 	});
