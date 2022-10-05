@@ -3,7 +3,7 @@
 
 import initialState from './contract/initial-state.json';
 import contractSrc from './contract/contractSrc.js?raw';
-import { base58btc as multibase58btc } from 'multiformats/bases/base58';
+// import { base58btc as multibase58btc } from 'multiformats/bases/base58';
 import {
 	encodeURLSafe as base64URLfromBytes
 	// decodeURLSafe as base64URLtoBytes
@@ -117,15 +117,15 @@ export async function generateVerificationMethods({ did, publicKeys }) {
 		const id = `${did}#key-${i}`;
 
 		const method = isRSAKey(key)
-			? await generateRSAVerificationMethod({ did, id, key })
-			: await generateEd25519VerificationMethod({ did, id, key });
+			? generateRSAVerificationMethod({ did, id, key })
+			: generateEd25519VerificationMethod({ did, id, key });
 		verificationMethods.push(method);
 	}
 
 	return verificationMethods;
 }
 
-async function generateRSAVerificationMethod({
+function generateRSAVerificationMethod({
 	did,
 	id,
 	key
@@ -146,7 +146,7 @@ async function generateRSAVerificationMethod({
 	};
 }
 
-export async function generateEd25519VerificationMethod({
+export function generateEd25519VerificationMethod({
 	did,
 	id,
 	key
@@ -167,22 +167,22 @@ export async function generateEd25519VerificationMethod({
 	};
 }
 
-async function generateEd25519MultibaseVerificationMethod({
-	did,
-	id,
-	key
-}: {
-	did: string;
-	id: string;
-	key: Uint8Array;
-}) {
-	return {
-		id,
-		type: 'Ed25519VerificationKey2020',
-		controller: did,
-		publicKeyMultibase: multibase58btc.encode(key)
-	};
-}
+// async function generateEd25519MultibaseVerificationMethod({
+// 	did,
+// 	id,
+// 	key
+// }: {
+// 	did: string;
+// 	id: string;
+// 	key: Uint8Array;
+// }) {
+// 	return {
+// 		id,
+// 		type: 'Ed25519VerificationKey2020',
+// 		controller: did,
+// 		publicKeyMultibase: multibase58btc.encode(key)
+// 	};
+// }
 
 function isRSAKey(key: any): boolean {
 	return key.kty === 'RSA';
