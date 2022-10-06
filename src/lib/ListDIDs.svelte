@@ -26,6 +26,7 @@
 		if (ArDB?.default) ArDB = ArDB.default;
 		if (ArDB?.default) ArDB = ArDB.default;
 
+		console.log('ArDB', ArDB, { environment: warp.environment });
 		// instantiate ardb
 		const ardb = new ArDB(warp.arweave);
 
@@ -33,15 +34,19 @@
 		const walletAddress = await warp.arweave.wallets.getAddress();
 		console.log('walletAddress', walletAddress);
 		// get all contracts owned by the wallet address
-		allContracts = await ardb
-			.search('transactions')
-			.appName('SmartWeaveContract')
-			.from([walletAddress])
-			.findAll();
+		try {
+			allContracts = await ardb
+				.search('transactions')
+				.appName('SmartWeaveContract')
+				.from(walletAddress)
+				.findAll();
 
-		// log transactions
-		console.log({ allContracts });
-		dispatch('searchComplete', allContracts);
+			// log transactions
+			console.log({ allContracts });
+			dispatch('searchComplete', allContracts);
+		} catch (error) {
+			console.error(error);
+		}
 	});
 </script>
 
