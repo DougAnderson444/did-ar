@@ -14,7 +14,7 @@ Enables users to create a [smartweave contract](https://arweave.medium.com/intro
 
 ## Install
 
-Package deployed to npm `@peerpiper/did-ar`
+Package [deployed to npm](https://www.npmjs.com/package/@peerpiper/did-ar) `@peerpiper/did-ar`
 
 ```sh
 npm i @peerpiper/did-ar
@@ -43,7 +43,9 @@ interface DIDAr {
 
 ## Create DID
 
-Using an Arweave enabled wallet or passed in JWK: Pass an RSA Public Key JWK and/or Ed25519PublicKey bytes (Uint8Array) to `create`, which will create a did and did document saved as the Arweave Smartweave contract state:
+Pass an RSA Public Key JWK and Ed25519PublicKey bytes (Uint8Array) to `create`, which will create a did and did document saved as the Arweave Smartweave contract state.
+
+The [Demo](https://github.com/DougAnderson444/did-ar/blob/master/src/routes/%2Bpage.svelte) uses the keys from a [PeerPiper/web3-wallet-connector](https://github.com/PeerPiper/web3-wallet-connector) to create the DID.
 
 ```js
 const did = await didar.create({ RSAPublicKey: JWK, Ed25519PublicKey: Uint8Array });
@@ -60,13 +62,13 @@ If you have a `didar` instance, you can simply `read` from it:
 const didDoc = await didar.read(did);
 ```
 
-If you are using DID from an external source, read using the resolver. This library also exports a stand alone DID Resolver compliant with the [DIF](https://github.com/decentralized-identity/did-resolver).
+If you are using DID from an external source, read using the resolver, as this library exports a standalone DID Resolver compliant with the [DIF](https://github.com/decentralized-identity/did-resolver).
 
 ```js
 import { didArResolver } from '@peerpiper/did-ar';
 import { Resolver } from 'did-resolver'; // Decentralized Identity Foundation
 
-const did = `did:ar:abc123zyx-ELEMENOPee`;
+const did = `did:ar:abc123zyx-ELEMENOPeeeeeeeeeeeeeeee`;
 // or when running in `vite dev` mode:
 // did:arlocal
 
@@ -74,7 +76,7 @@ const arResolver = didArResolver.getResolver();
 resolver = new Resolver(arResolver);
 const didDoc = (await resolver.resolve(did)).didDocument;
 
-console.log(didDoc.verificationMethod[0].publicKeyJwk); // this did's public key
+console.log(didDoc.verificationMethod[0].publicKeyJwk); // one of the did's public keys
 ```
 
 ## Update DID Document
@@ -82,8 +84,6 @@ console.log(didDoc.verificationMethod[0].publicKeyJwk); // this did's public key
 To update, just pass the new DID Doc properties you wish to update. Then, `did-ar` verifies that the caller is the wallet owner (and by extention the `did:ar` owner). If anyone other than the owner of the contract tries to update the did document, the contract will only return the current DID Doc state.
 
 The contract then replaces the old DID Document properties with the new properties.
-
-Example: Using a arweave wallet like `ArConnect` or [`@peerpiper/web3-wallet-connector`](https://www.npmjs.com/package/@peerpiper/web3-wallet-connector) (recommended):
 
 ```js
 const id = did;

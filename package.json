@@ -44,5 +44,9 @@
 		"multiformats": "^9.9.0",
 		"svelte-json-tree": "^1.0.0",
 		"warp-contracts": "^1.2.12"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/DougAnderson444/did-ar.git"
 	}
 }
