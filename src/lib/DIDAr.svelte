@@ -10,33 +10,39 @@
 	export let wallet: handlers;
 	export let srcTx: string | null;
 
-	let createDid: Function;
+	let didar: DIDAr;
 	let did: string;
-	// fund arlocal for this RSA key address
-	let walletAddress;
 	let local: boolean = false;
 	let existing: boolean = false;
 	let complete: boolean = false;
+	let ownerAddress: string;
 
 	let handleCreateDID: () => Promise<void>;
 
 	onMount(async () => {
-		({ createDid } = await import('./didar'));
-
 		// get location params, check to see if local is set to true
 		const urlParams = new URLSearchParams(window.location.search);
 		local = urlParams.get('local') === 'true';
 
-		handleCreateDID = async function () {
-			walletAddress = await wallet.arweaveWalletAPI.getActiveAddress();
+		const { init } = await import('./didar');
+		didar = await init({ local });
 
-			({ did, srcTx } = await createDid({
+		if (local) {
+			const { jwk, address } = await didar.warp.testing.generateWallet();
+			didar.wallet = jwk; // override 'use_wallet' and set to funded wallet for testing
+			ownerAddress = address;
+			console.log('test address', address);
+		}
+
+		handleCreateDID = async function () {
+			did = await didar.create({
 				RSAPublicKey,
-				Ed25519PublicKey,
-				options: { walletAddress, srcTx, local }
-			}));
+				Ed25519PublicKey
+			});
 		};
 	});
+
+	$: if (wallet) (async () => (ownerAddress = await wallet.arweaveWalletAPI.getActiveAddress()))();
 
 	async function searchComplete(e: CustomEvent) {
 		console.log('searchComplete', e.detail);
@@ -45,10 +51,10 @@
 	}
 </script>
 
-{#if wallet}
+{#if wallet && didar && ownerAddress}
 	{#key wallet}
 		{#key did}
-			<ListDiDs on:searchComplete={searchComplete} />
+			<ListDiDs {ownerAddress} on:searchComplete={searchComplete} />
 		{/key}
 
 		{#if complete && !existing && handleCreateDID}

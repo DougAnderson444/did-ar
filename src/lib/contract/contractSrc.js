@@ -8,10 +8,10 @@ export async function handle(state, action) {
 
 	if (input.function === 'update') {
 		if (!state.id) {
-			if (!input.id.startsWith('did:ar')) {
+			if (!input?.id?.startsWith('did:ar')) {
 				throw new ContractError('Invalid ID');
 			}
-			state.id = input.id;
+			state.id = input?.id || state.id;
 		}
 
 		if (input.verificationMethod) {

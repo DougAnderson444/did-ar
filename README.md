@@ -1,14 +1,14 @@
 # DID:AR
 
-✔️📇 Your Own Permanent Identity on Web3
-
 Enables users to create a [smartweave contract](https://arweave.medium.com/introducing-smartweave-building-smart-contracts-with-arweave-1fc85cb3b632) on [Arweave](https://www.arweave.org/) to store their [Decentralized Identity Document](https://www.w3.org/TR/did-core/) (DID Doc).
 
-✔️💰 No Tokens / cryptocurrency, thanks to [Bundlr](https://bundlr.network/)!
+✔️📇 Your Own Permanent Identity on Web3
+
+✔️💰 No Tokens / cryptocurrency (under 100kb), thanks to [Bundlr](https://bundlr.network/)!
 
 ✔️♾️ Lasts forever, thanks to [Arweave](https://www.arweave.org/)!
 
-✔️💻 Saves to your OWN device!
+✔️💻 Saves to your OWN device, thanks to [PeerPiper](https://peerpiper.github.io/iframe-wallet-sdk/)!
 
 ✔️🗃️ Conveniently Control Your Data
 
@@ -20,14 +20,33 @@ TODO: Package deployed to npm `@peerpiper/did-ar`
 npm i @peerpiper/did-ar
 ```
 
+## Initialize
+
+```ts
+import { init } from 'did-ar';
+
+const didar: DIDAr = await init({
+    local: true, // uses local Arweave instance
+    // wallet: JWKInterface, // if no wallet set, will 'use_wallet'
+    });
+
+// which gives you a DIDAr instance:
+interface DIDAr {
+    warp: WarpFactory;
+    wallet: JWKInterface | 'use_wallet,
+    create: Function,
+    read: Function,
+    update: Function
+}
+
+```
+
 ## Create DID
 
-Using an Arweave enabled wallet or passed in JWK: Pass an RSA Public Key JWK and/or Ed25519PublicKey bytes (Uint8Array) to `createDid`, which will create a did and did document saved as the Arweave Smartweave contract state:
+Using an Arweave enabled wallet or passed in JWK: Pass an RSA Public Key JWK and/or Ed25519PublicKey bytes (Uint8Array) to `create`, which will create a did and did document saved as the Arweave Smartweave contract state:
 
 ```js
-import { createDid } from '@peerpiper/did-ar';
-
-const did = await createDid({ RSAPublicKey: JWK, Ed25519PublicKey: Uint8Array });
+const did = await didar.create({ RSAPublicKey: JWK, Ed25519PublicKey: Uint8Array });
 console.log(did); // did:ar:abc123zyx-ELEMENOPee
 // or when running in `vite dev` mode:
 console.log(did); // did:arlocal:abc123zyx-ELEMENOPee
@@ -35,7 +54,13 @@ console.log(did); // did:arlocal:abc123zyx-ELEMENOPee
 
 ## Read DID (Resolve)
 
-This library exports a DID Resolver compliant with the [DIF](https://github.com/decentralized-identity/did-resolver).
+If you have a `didar` instance, you can simply `read` from it:
+
+```js
+const didDoc = await didar.read(did);
+```
+
+If you are using DID from an external source, read using the resolver. This library also exports a stand alone DID Resolver compliant with the [DIF](https://github.com/decentralized-identity/did-resolver).
 
 ```js
 import { didArResolver } from '@peerpiper/did-ar';
@@ -54,25 +79,28 @@ console.log(didDoc.verificationMethod[0].publicKeyJwk); // this did's public key
 
 ## Update DID Document
 
-To update, just pass the new DID Doc to `did-ar` which verifies that the caller is the wallet owner (and by extention the `did:ar` owner). If anyone other than the owner of the contract tries to update the did document, the contract will only return the current DID Doc state.
+To update, just pass the new DID Doc properties you wish to update. Then, `did-ar` verifies that the caller is the wallet owner (and by extention the `did:ar` owner). If anyone other than the owner of the contract tries to update the did document, the contract will only return the current DID Doc state.
 
-The contract then replaces the old DID Document with the new one.
+The contract then replaces the old DID Document properties with the new properties.
 
 Example: Using a arweave wallet like `ArConnect` or [`@peerpiper/web3-wallet-connector`](https://www.npmjs.com/package/@peerpiper/web3-wallet-connector) (recommended):
 
 ```js
-import { updateDidDoc } from '@peerpiper/did-ar';
+const id = did;
+let didDoc; // exsiting DID Doc
 
-updateDidDoc({ didDoc });
-```
+const replaceProperties = {
+	service: [
+		...didDoc.service, // keep existing service listings
+		{
+			id: `${did}#linked-domain`,
+			type: 'LinkedDomains',
+			serviceEndpoint: 'https://douganderson444.arweave.dev'
+		}
+	]
+};
 
-Or, pass in a private key JWK for testing:
-
-```js
-import { updateDidDoc } from '@peerpiper/did-ar';
-
-// passing in a private key JWK for testing:
-updateDidDoc({ didDoc, options: { arweaveWallet } });
+await didar.update({ id, ...replaceProperties }); // will change service property of DID Doc
 ```
 
 ## Delete
@@ -82,6 +110,8 @@ TODO: Implement [ANS-106 Do Not Store Request](https://github.com/ArweaveTeam/ar
 ## Forking The Smart Contract
 
 With Arweave, using Warp Contract's `deployFromSourceTx` you can use an existing deployed contract and add your own initial state to make a new DID Doc.
+
+TODO: List published version so others can deploy from source.
 
 # References
 

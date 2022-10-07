@@ -1,112 +1,99 @@
-// import * as WarpSdk from 'warp-contracts';
-// import type { JWKInterface } from 'arweave/node/lib/wallet';
-
 import initialState from './contract/initial-state.json';
 import contractSrc from './contract/contractSrc.js?raw';
-// import { base58btc as multibase58btc } from 'multiformats/bases/base58';
 import {
 	encodeURLSafe as base64URLfromBytes
 	// decodeURLSafe as base64URLtoBytes
 } from '@stablelib/base64';
 
-export async function createDid({
-	RSAPublicKey,
-	Ed25519PublicKey,
-	options = { arweaveWallet, walletAddress, srcTx, local }
-}) {
-	const warp = await setUpWarp({ walletAddress: options?.walletAddress, local: options?.local });
+// import { base58btc as multibase58btc } from 'multiformats/bases/base58';
 
-	const { did, srcTx, contractTxId } = await createDidAr({
-		srcTx: options?.srcTx,
-		warp,
-		wallet: options?.arweaveWallet || 'use_wallet',
-		RSAPublicKey,
-		Ed25519PublicKey
-	});
-	return { did, srcTx };
-}
-
-export async function setUpWarp({ local }: { local: boolean } = {}) {
-	// const { WarpFactory } = await import('warp-contracts/web');
-
-	const isBrowser = typeof window !== 'undefined' && typeof window.document !== 'undefined';
-
-	const { WarpFactory } = await import('warp-contracts'); // build process needs node version
-
-	let warp =
-		local || process.env.NODE_ENV == 'development'
-			? WarpFactory.forLocal()
-			: WarpFactory.forMainnet();
-
-	if (warp.environment == 'local') {
-		const walletAddress = await warp.arweave.wallets.getAddress();
-		await warp.arweave.api.get(`/mint/${walletAddress}/1000000000000000`);
+export async function init(
+	{ local, wallet = 'use_wallet' }: { local: boolean; wallet?: 'use_wallet' } = {
+		local: false,
+		wallet: 'use_wallet'
 	}
-	return warp;
-}
+) {
+	const { WarpFactory } = await import('warp-contracts');
+	const warp = local ? WarpFactory.forLocal() : WarpFactory.forMainnet();
 
-export async function updateDidDoc({ didDoc, options = { arweaveWallet, walletAddress } }) {
-	const warp = await setUpWarp({ walletAddress: options?.walletAddress });
-	const wallet = options?.arweaveWallet || 'use_wallet';
-	const contract = warp.contract(didDoc.id);
-	contract.connect(wallet);
-	await contract.writeInteraction({
-		function: 'update',
-		...didDoc
-	});
-}
+	console.log('warp.environment', warp.environment);
 
-export async function deploySrcContract({ warp, wallet = 'use_wallet' }) {
-	if (!warp) throw new Error('warp instance is required');
-
-	const { srcTxId } = await warp.createContract.deploy({
+	return {
+		warp,
 		wallet,
-		initState: JSON.stringify(initialState),
-		src: contractSrc
-	});
-	console.log({ srcTxId });
-	return srcTxId;
+		create,
+		read,
+		update
+	};
 }
 
-export async function createDidAr({ warp, wallet, RSAPublicKey, Ed25519PublicKey, srcTx = null }) {
-	if (!warp) throw new Error('warp instance is required');
+export async function create({ RSAPublicKey, Ed25519PublicKey, srcTx = null }) {
+	if (!this.warp || !this.wallet) throw new Error('warp and wallet required in parent object');
 
 	// validate srcTx is actually a valid arweave transaction on this network
 	if (srcTx) {
 		try {
-			const { data } = await warp.arweave.transactions.get(srcTx);
+			const { data } = await this.warp.arweave.transactions.get(srcTx);
 		} catch (error) {
 			srcTx = null;
 		}
 	}
 
-	const srcTxId = srcTx || (await deploySrcContract({ warp, wallet }));
+	const srcTxId =
+		srcTx ||
+		(
+			await this.warp.createContract.deploy({
+				wallet: this.wallet,
+				initState: JSON.stringify(initialState),
+				src: contractSrc
+			})
+		).srcTxId;
 
-	const { contractTxId } = await warp.createContract.deployFromSourceTx({
-		wallet,
+	const { contractTxId } = await this.warp.createContract.deployFromSourceTx({
+		wallet: this.wallet,
 		initState: JSON.stringify(initialState),
 		srcTxId
 	});
 
 	const did =
-		warp.environment == 'mainnet' ? `did:ar:${contractTxId}` : `did:arlocal:${contractTxId}`;
-
-	// use warp-contract to update the contract state
-	const contract = warp.contract(contractTxId);
-	contract.connect(wallet);
+		this.warp.environment == 'mainnet' ? `did:ar:${contractTxId}` : `did:arlocal:${contractTxId}`;
 
 	const verificationMethods = await generateVerificationMethods({
 		did,
 		publicKeys: [RSAPublicKey, Ed25519PublicKey]
 	});
 
-	await contract.writeInteraction({
-		function: 'update',
+	await this.update({
 		id: did,
 		verificationMethod: verificationMethods
 	});
 
-	return { did, srcTx: srcTxId, contractTxId };
+	return did; // { did, srcTx: srcTxId };
+}
+
+/**
+ * Pass in a Partial DID Doc with at least an id to get the contractTxId
+ */
+export async function update({ id, ...rest }) {
+	if (!this.warp || !this.wallet) throw new Error('warp and wallet required in parent object');
+
+	const contractTxId = id.replace(/^did:ar(.*?):/, '');
+	const contract = this.warp.contract(contractTxId);
+	contract.connect(this.wallet);
+	await contract.writeInteraction({
+		...rest,
+		id,
+		function: 'update'
+	});
+}
+
+export async function read(did) {
+	if (!this.warp || !this.wallet) throw new Error('warp and wallet required in parent object');
+
+	const contractTxId = did.replace(/^did:ar(.*?):/, '');
+	const contract = this.warp.contract(contractTxId);
+	const didDoc = (await contract.readState()).cachedValue.state;
+	return didDoc;
 }
 
 export async function generateVerificationMethods({ did, publicKeys }) {
