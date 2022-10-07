@@ -7,6 +7,8 @@
 		"build": "vite build",
 		"test": "vitest",
 		"coverage": "vitest run --coverage",
+		"package": "svelte-package",
+		"publish:package": "npm publish ./package --access public",
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
@@ -36,6 +38,7 @@
 	"type": "module",
 	"dependencies": {
 		"@stablelib/base64": "^1.0.1",
+		"@sveltejs/package": "^1.0.0-next.5",
 		"ardb": "^1.1.10",
 		"did-resolver": "^4.0.0",
 		"multiformats": "^9.9.0",

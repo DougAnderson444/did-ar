@@ -14,7 +14,7 @@ Enables users to create a [smartweave contract](https://arweave.medium.com/intro
 
 ## Install
 
-TODO: Package deployed to npm `@peerpiper/did-ar`
+Package deployed to npm `@peerpiper/did-ar`
 
 ```sh
 npm i @peerpiper/did-ar
