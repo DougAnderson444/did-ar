@@ -1,26 +1,20 @@
 <script lang="ts">
 	import { onMount, createEventDispatcher } from 'svelte';
 	import ResolveDID from './ResolveDID.svelte';
-	import type { ArdbTransaction } from 'ardb/lib/types';
 	// import Arweave from 'arweave';
-	// import ArDB from 'ardb';
 
 	export let ownerAddress: string;
 	export let local: boolean = false;
 
 	const dispatch = createEventDispatcher();
 
-	let allContracts: ArdbTransaction[];
+	let allContracts: any[];
 	let makeDid: Function | null;
 
 	onMount(async () => {
+		console.log('Looking for DID contracts...', new Date().toLocaleTimeString());
 		makeDid = (contractTxId: string) =>
 			local ? `did:arlocal:${contractTxId}` : `did:ar:${contractTxId}`;
-
-		// import ardb
-		let ArDB = await import('ardb');
-		if (ArDB?.default) ArDB = ArDB.default;
-		if (ArDB?.default) ArDB = ArDB.default;
 
 		let Arweave = await import('arweave');
 		if (Arweave?.default) Arweave = Arweave.default;
@@ -34,36 +28,58 @@
 			logging: false
 		});
 
-		// instantiate ardb
-		const ardb = new ArDB(arweave);
-
-		console.log('ownerAddress', ownerAddress);
-
-		const searchTags = [
-			{ name: 'App-Name', values: ['SmartWeaveAction'] },
-			{ name: 'Sequencer-Owner', values: [ownerAddress] }
-			// { name: 'Uploader-Contract-Owner', values: [ownerAddress] } // contract source uploader
-		];
-
-		// get all contracts owned by the wallet address
-		try {
-			allContracts = await ardb.search('transactions').tags(searchTags).findAll();
-
-			// log transactions
-			console.log({ allContracts });
-
-			// go through all contracts and get the Tag named "Contract" and block timestamp
-			allContracts = allContracts.map((tx) => {
-				const contractTag = tx.tags.find((tag) => tag.name === 'Contract');
-				if (contractTag) {
-					return { id: contractTag.value, timestamp: tx.block.timestamp };
+		arweave
+			.arql({
+				op: 'and',
+				expr1: {
+					op: 'equals',
+					expr1: 'App-Name',
+					expr2: 'SmartWeaveAction'
+				},
+				expr2: {
+					op: 'equals',
+					expr1: 'Sequencer-Owner',
+					expr2: ownerAddress
 				}
-			});
+			})
+			.then(async (txIds) => {
+				console.log('txIds', txIds);
+				// given a tx id, get the tags for the tx
+				// make a query that looks up this txId
+				// get the contract id from the tags
+				const query = `query {
+								transactions(ids: ["${txIds.join('","')}"]) {
+									edges {
+										node {
+											block {
+												timestamp
+											}
+											tags {
+												name
+												value
+											}
+										}
+									}
+								}
+							}`;
 
-			dispatch('searchComplete', allContracts);
-		} catch (error) {
-			console.error(error);
-		}
+				const res = await arweave.api.post(
+					'graphql',
+					{ query },
+					{ headers: { 'content-type': 'application/json' } }
+				);
+
+				// for each of the edges, get the values of the array element with the name 'Contract' and return block timestamp toLocaleString
+				allContracts = res.data.data.transactions.edges.map((edge) => {
+					const contractId = edge.node.tags.find((tag) => tag.name === 'Contract').value;
+					return {
+						id: contractId,
+						timestamp: new Date(edge.node?.block?.timestamp * 1000).toLocaleString() || null
+					};
+				});
+
+				dispatch('searchComplete', allContracts);
+			});
 	});
 </script>
 
@@ -73,7 +89,7 @@
 		{#if makeDid && contract.id}
 			<ResolveDID did={makeDid(contract.id)}>
 				{makeDid(contract.id)}
-				<div slot="timestamp">{new Date(contract.timestamp).toLocaleString()}</div>
+				<div slot="timestamp">{new Date(contract.timestamp * 1000).toLocaleString()}</div>
 			</ResolveDID>
 		{/if}
 	{/each}
