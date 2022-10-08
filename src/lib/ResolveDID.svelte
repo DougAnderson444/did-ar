@@ -26,23 +26,30 @@
 	async function resolve() {
 		console.log('resolving ', did);
 		didDocument = (await resolver.resolve(did)).didDocument;
+
+		// if no Document after 5 secodns, try again for 2 minutes
+		if (!didDocument) {
+			setTimeout(() => {
+				resolve();
+			}, 5000);
+		}
+
 		return didDocument;
 	}
 </script>
 
-{#if didDocument && didDocument?.verificationMethod?.length}
-	<div class="m-4 p-4 border rounded-xl shadow-lg font-semibold">
-		<div class="flex flex-row m-4 p-4 bg-[#42b983] text-white font-normal rounded-lg">
-			<div class="flex-1 pr-4">
-				<Clipboard>
-					<slot />
-				</Clipboard>
-			</div>
-			<div class="flex-0 pr-4">
-				<slot name="timestamp" />
-			</div>
+<div class="m-4 p-4 border rounded-xl shadow-lg font-semibold">
+	<div class="flex flex-row m-4 p-4 bg-[#42b983] text-white font-normal rounded-lg">
+		<div class="flex-1 pr-4">
+			<Clipboard>
+				<slot />
+			</Clipboard>
 		</div>
-
+		<div class="flex-0 pr-4">
+			<slot name="timestamp" />
+		</div>
+	</div>
+	{#if didDocument && didDocument?.verificationMethod?.length}
 		<details class="cursor-pointer overflow-hidden" bind:open={isOpen}>
 			<summary
 				>Full DID Document
@@ -77,5 +84,5 @@
 				</div>
 			{/if}
 		</details>
-	</div>
-{/if}
+	{/if}
+</div>
