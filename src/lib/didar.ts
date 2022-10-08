@@ -31,29 +31,26 @@ export async function create({ RSAPublicKey, Ed25519PublicKey, srcTx = null }) {
 	if (!this.warp || !this.wallet) throw new Error('warp and wallet required in parent object');
 
 	// validate srcTx is actually a valid arweave transaction on this network
-	if (srcTx) {
-		try {
-			const { data } = await this.warp.arweave.transactions.get(srcTx);
-		} catch (error) {
-			srcTx = null;
-		}
-	}
+	// can't use with warp contracts, need get search for it using arql/ardb tags
+	// if (srcTx) {
+	// 	try {
+	// 		const { data } = await this.warp.arweave.transactions.get(srcTx);
+	// 	} catch (error) {
+	// 		srcTx = null;
+	// 	}
+	// }
 
-	const srcTxId =
-		srcTx ||
-		(
-			await this.warp.createContract.deploy({
+	const { contractTxId, srcTxId } = srcTx
+		? await this.warp.createContract.deployFromSourceTx({
+				wallet: this.wallet,
+				initState: JSON.stringify(initialState),
+				srcTxId: srcTx
+		  })
+		: await this.warp.createContract.deploy({
 				wallet: this.wallet,
 				initState: JSON.stringify(initialState),
 				src: contractSrc
-			})
-		).srcTxId;
-
-	const { contractTxId } = await this.warp.createContract.deployFromSourceTx({
-		wallet: this.wallet,
-		initState: JSON.stringify(initialState),
-		srcTxId
-	});
+		  });
 
 	const did =
 		this.warp.environment == 'mainnet' ? `did:ar:${contractTxId}` : `did:arlocal:${contractTxId}`;
