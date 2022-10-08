@@ -3,7 +3,8 @@
 	// @ts-ignore
 	import type { handlers } from '@peerpiper/iframe-wallet-sdk';
 
-	import ListDiDs from './ListDIDs.svelte';
+	import ListDIDs from './ListDIDs.svelte';
+	import Spinner from './Spinner.svelte';
 
 	export let RSAPublicKey: { kty: string; n: string; e: string; kid?: string };
 	export let Ed25519PublicKey: Uint8Array;
@@ -14,7 +15,7 @@
 	let did: string;
 	let local: boolean = false;
 	let existing: boolean = false;
-	let complete: boolean = false;
+	let creating: boolean = false;
 	let ownerAddress: string;
 
 	let handleCreateDID: () => Promise<void>;
@@ -35,10 +36,20 @@
 		}
 
 		handleCreateDID = async function () {
+			creating = true;
 			did = await didar.create({
 				RSAPublicKey,
-				Ed25519PublicKey
+				Ed25519PublicKey,
+				srcTx
 			});
+			// refresh did variable every second until searchComplete is non null
+			const interval = setInterval(async () => {
+				ownerAddress = ownerAddress; // refresh ListDIDs
+				if (existing) {
+					clearInterval(interval);
+					creating = false;
+				}
+			}, 400);
 		};
 	});
 
@@ -46,7 +57,6 @@
 
 	async function searchComplete(e: CustomEvent) {
 		console.log('searchComplete', e.detail);
-		complete = true;
 		existing = e.detail.length;
 	}
 </script>
@@ -54,13 +64,16 @@
 {#if wallet && didar && ownerAddress}
 	{#key wallet}
 		{#key did}
-			<ListDiDs {ownerAddress} on:searchComplete={searchComplete} />
+			<ListDIDs {ownerAddress} on:searchComplete={searchComplete} />
 		{/key}
 
-		{#if complete && !existing && handleCreateDID}
+		{#if !creating && !existing && handleCreateDID}
 			<div class="m-4 p-4">
 				{#if srcTx}
-					Using existing contract <span class="font-mono bg-gray-50 m-2 p-2 rounded">{srcTx}</span>
+					Using existing contract <span class="font-mono bg-gray-50 m-2 p-2 rounded">
+						<a href="https://sonar.warp.cc/#/app/source/{srcTx}#code" target="_blank">{srcTx}🔗↗️</a
+						></span
+					>
 				{:else}
 					We will deploy a new Smart Contract to manage your DID.
 				{/if}
@@ -74,6 +87,8 @@
 					? 'local'
 					: process.env.NODE_ENV}
 			</div>
+		{:else if creating}
+			<Spinner>Creating DID...</Spinner>
 		{/if}
 	{/key}
 {:else}
