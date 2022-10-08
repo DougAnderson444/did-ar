@@ -19,7 +19,7 @@
 
 	onMount(async () => {
 		// check if localStorage has  srcTx, else leave as null
-		srcTx = localStorage.getItem('srcTx') || null;
+		srcTx = localStorage.getItem('srcTx') || '0BkUeNAfOF6NzYmVJ__4eDdeKoFshJ5BzxOxOitJmXk'; // https://sonar.warp.cc/#/app/source/0BkUeNAfOF6NzYmVJ__4eDdeKoFshJ5BzxOxOitJmXk#code
 		ready = true;
 	});
 
@@ -31,6 +31,8 @@
 
 <Web3WalletMenu on:walletReady={walletReady} />
 
-{#if ready}
-	<DIDAr {wallet} {RSAPublicKey} {Ed25519PublicKey} bind:srcTx />
-{/if}
+<div class="flex flex-col items-center m-2 p-2">
+	{#if ready}
+		<DIDAr {wallet} {RSAPublicKey} {Ed25519PublicKey} bind:srcTx />
+	{/if}
+</div>
