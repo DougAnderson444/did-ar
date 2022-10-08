@@ -25,7 +25,7 @@ const config: UserConfig = {
 	},
 	optimizeDeps: {
 		// force these to be pre-bundled
-		// include: ['warp-contracts']
+		include: ['warp-contracts'] // toggle?
 	},
 	build: {
 		sourcemap: true
