@@ -34,12 +34,22 @@
 				expr1: {
 					op: 'equals',
 					expr1: 'App-Name',
-					expr2: 'SmartWeaveAction'
+					expr2: 'SmartWeaveContract'
 				},
 				expr2: {
 					op: 'equals',
-					expr1: 'Sequencer-Owner',
+					expr1: 'Uploader-Contract-Owner',
 					expr2: ownerAddress
+				},
+				expr3: {
+					op: 'equals',
+					expr1: 'Content-Type',
+					expr2: 'application/json'
+				},
+				expr4: {
+					op: 'equals',
+					expr1: 'DID-AR',
+					expr2: 'true'
 				}
 			})
 			.then(async (txIds) => {
@@ -70,13 +80,15 @@
 				);
 
 				// for each of the edges, get the values of the array element with the name 'Contract' and return block timestamp toLocaleString
-				allContracts = res.data.data.transactions.edges.map((edge) => {
-					const contractId = edge.node.tags.find((tag) => tag.name === 'Contract').value;
-					return {
-						id: contractId,
-						timestamp: new Date(edge.node?.block?.timestamp * 1000).toLocaleString() || null
-					};
-				});
+				allContracts = res.data.data.transactions.edges.map(
+					(edge: { node: { tags: any[]; block: { timestamp: number } } }) => {
+						const contractId = edge.node.tags.find((tag) => tag.name === 'Uploader-Tx-Id').value;
+						return {
+							id: contractId,
+							timestamp: new Date(edge.node?.block?.timestamp * 1000).toLocaleString() || null
+						};
+					}
+				);
 
 				dispatch('searchComplete', allContracts);
 			});
