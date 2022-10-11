@@ -26,8 +26,8 @@ npm i @peerpiper/did-ar
 import { init } from 'did-ar';
 
 const didar: DIDAr = await init({
-	local: true // uses local Arweave instance
-	// wallet: JWKInterface, // if no wallet set, will 'use_wallet'
+	// local: true, // default is false, uses local Arweave instance
+	// wallet: JWKInterface, // default is 'use_wallet' if no wallet is set
 });
 
 // which gives you a DIDAr instance:
