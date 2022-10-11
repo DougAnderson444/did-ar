@@ -40,16 +40,20 @@ export async function create({ RSAPublicKey, Ed25519PublicKey, srcTx = null }) {
 	// 	}
 	// }
 
+	const tags = [{ name: 'DID-AR', value: 'true' }];
+
 	const { contractTxId, srcTxId } = srcTx
 		? await this.warp.createContract.deployFromSourceTx({
 				wallet: this.wallet,
 				initState: JSON.stringify(initialState),
-				srcTxId: srcTx
+				srcTxId: srcTx,
+				tags
 		  })
 		: await this.warp.createContract.deploy({
 				wallet: this.wallet,
 				initState: JSON.stringify(initialState),
-				src: contractSrc
+				src: contractSrc,
+				tags
 		  });
 
 	const did =
