@@ -41,9 +41,7 @@
 <div class="m-4 p-4 border rounded-xl shadow-lg font-semibold">
 	<div class="flex flex-row m-4 p-4 bg-[#42b983] text-white font-normal rounded-lg">
 		<div class="flex-1 pr-4">
-			<Clipboard>
-				<slot />
-			</Clipboard>
+			<Clipboard><slot /></Clipboard>
 		</div>
 		<div class="flex-0 pr-4">
 			<slot name="timestamp" />

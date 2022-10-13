@@ -99,8 +99,8 @@
 	{#each allContracts as contract}
 		<!-- && contract?.verificationMethod?.length -->
 		{#if makeDid && contract.id}
-			<ResolveDID did={makeDid(contract.id)}>
-				{makeDid(contract.id)}
+			<ResolveDID did={makeDid(contract.id)}
+				>{makeDid(contract.id)}
 				<div slot="timestamp">{new Date(contract.timestamp * 1000).toLocaleString()}</div>
 			</ResolveDID>
 		{/if}
