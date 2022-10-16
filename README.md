@@ -4,6 +4,8 @@ Enables users to create a [smartweave contract](https://arweave.medium.com/intro
 
 ✔️📇 Your Own Permanent Identity on Web3
 
+✔️🗃️ Resolve DID from `.ar` name, so `douganderson444.ar` -> `did:ar:....`
+
 ✔️💰 No Tokens / cryptocurrency (under 100kb), thanks to [Bundlr](https://bundlr.network/)!
 
 ✔️♾️ Lasts forever, thanks to [Arweave](https://www.arweave.org/)!
@@ -78,6 +80,17 @@ const didDoc = (await resolver.resolve(did)).didDocument;
 console.log(didDoc.verificationMethod[0].publicKeyJwk); // one of the did's public keys
 ```
 
+## Read from `.ar` name (Resolve DID from Arweave Name Service / Name Token)
+
+```js
+import { arnsResolver } from '@peerpiper/did-ar';
+
+const arnsName = 'douganderson444'; // From: douganderson444.ar or 'douganderson444.arweave.dev' || 'douganderson444.ar.page';
+const did = await arnsResolver(arnsName);
+
+console.log(did); // did:ar:UGnqpxdraMbkmG-4F6jU7xkFhErNgaXLQf39tW7yYck
+```
+
 ## Update DID Document
 
 To update, just pass the new DID Doc properties you wish to update. Then, `did-ar` verifies that the caller is the wallet owner (and by extention the `did:ar` owner). If anyone other than the owner of the contract tries to update the did document, the contract will only return the current DID Doc state.
@@ -105,6 +118,10 @@ await didar.update({ id, ...replaceProperties }); // will change service propert
 ## Delete
 
 TODO: Implement [ANS-106 Do Not Store Request](https://github.com/ArweaveTeam/arweave-standards/blob/master/ans/ANS-106.md)
+
+## What can you do with a DeID?
+
+You can grab the keys out of the document. From the RSA key, you can get an Arweave address and look up their Arweave data. You can grab their DAG from ArDAG and interact with that data and apps too.
 
 ## Forking The Smart Contract
 
