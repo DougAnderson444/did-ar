@@ -32,7 +32,8 @@ describe('Testing arns Resolver', () => {
 	});
 
 	it('should resolve ARNS to did directly too ', async () => {
-		const directDid = await arnsResolver(arnsName, { CacheOptions });
-		expect(directDid).toEqual(dougDID);
+		const directDidDoc = await arnsResolver(arnsName, { CacheOptions });
+		// expect directDidDoc to be a JSON object with id property matching dougDID
+		expect(directDidDoc).toHaveProperty('id', dougDID);
 	});
 });

@@ -8,7 +8,8 @@ export async function arnsResolver(
 	const arnsInstance = await init({ CacheOptions });
 	const antContractId = await arnsInstance.resolveARNS(arnsName);
 	const did = await arnsInstance.resolveANT(antContractId);
-	return did;
+	const didDoc = await arnsInstance.resolveDID(did);
+	return didDoc;
 }
 
 // if resolveing lots of names, use this
@@ -21,7 +22,8 @@ export async function init({ local, CacheOptions } = { local: false, CacheOption
 	return {
 		warp,
 		resolveARNS,
-		resolveANT
+		resolveANT,
+		resolveDID
 	};
 }
 
@@ -38,4 +40,11 @@ export async function resolveANT(antContractId: string): Promise<string> {
 	const registry = (await this.warp.contract(antContractId).readState()).cachedValue.state; // lookup doc
 	const did = `did:ar:${registry.records['did-ar'].transactionId}`;
 	return did;
+}
+
+export async function resolveDID(did: string): Promise<string> {
+	// split did:ar:identitifier by the part fater did:ar: into "did:ar" and "identitifier"
+	const identifier = did.replace('did:ar:', '');
+	const didDocument = (await this.warp.contract(identifier).readState()).cachedValue.state;
+	return didDocument;
 }
