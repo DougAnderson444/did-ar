@@ -18,14 +18,16 @@ const config: UserConfig = {
 		deps: {
 			inline: ['warp-contracts']
 		},
-		hookTimeout: 60000
+		hookTimeout: 60000,
+		testTimeout: 60000
 	},
 	define: {
 		'process.env': { NODE_DEBUG: false }
 	},
 	optimizeDeps: {
 		// force these to be pre-bundled
-		include: ['warp-contracts'] // toggle?
+		include: ['warp-contracts'],
+		force: true
 	},
 	build: {
 		sourcemap: true
