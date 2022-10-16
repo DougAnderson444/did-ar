@@ -1,6 +1,8 @@
 {
 	"name": "@peerpiper/did-ar",
-	"version": "0.0.7",
+	"version": "0.0.8",
+	"main": "index.js",
+	"module": "index.js",
 	"scripts": {
 		"dev": "vite dev",
 		"arlocal": "npx arlocal",
