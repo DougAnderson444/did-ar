@@ -7,12 +7,20 @@ import {
 
 // import { base58btc as multibase58btc } from 'multiformats/bases/base58';
 
+export interface DIDAr {
+	warp: WarpFactory;
+	wallet: JWKInterface | 'use_wallet';
+	create: Function;
+	read: Function;
+	update: Function;
+}
+
 export async function init(
 	{ local, wallet = 'use_wallet' }: { local: boolean; wallet?: 'use_wallet' } = {
 		local: false,
 		wallet: 'use_wallet'
 	}
-) {
+): Promise<DIDAr> {
 	const { WarpFactory } = await import('warp-contracts');
 	const warp = local ? WarpFactory.forLocal() : WarpFactory.forMainnet();
 
