@@ -55,6 +55,7 @@
 					<a
 						class="text-blue-700"
 						target="_blank"
+						rel="noopener noreferrer"
 						href="https://sonar.warp.cc/#/app/contract/{did.replace(/.*?:/g, '')}"
 					>
 						🔗 View Blockchain Explorer</a
