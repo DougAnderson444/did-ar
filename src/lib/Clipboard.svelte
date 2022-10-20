@@ -18,7 +18,7 @@
 </script>
 
 <!-- Clipboard  -->
-<div class="Clipboard-Container" on:click={copy}>
+<div class="Clipboard-Container" on:click={copy} on:keypress={copy}>
 	<div class="Clipboard" bind:this={clip}>
 		<slot {copy} />
 	</div>
