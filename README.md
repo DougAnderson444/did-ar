@@ -4,7 +4,7 @@ Enables users to create a [smartweave contract](https://arweave.medium.com/intro
 
 ✔️📇 Your Own Permanent Identity on Web3
 
-✔️🗃️ Resolve DID from `.ar` name, so `douganderson444.ar` -> `did:ar:....`
+✔️🗃️ [Resolve DID](https://douganderson444.github.io/did-ar/search?name=douganderson444) from `.ar` name, so `douganderson444.ar` -> `did:ar:....`
 
 ✔️💰 No Tokens / cryptocurrency (under 100kb), thanks to [Bundlr](https://bundlr.network/)!
 
