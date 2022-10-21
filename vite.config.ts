@@ -8,7 +8,7 @@ const config: UserConfig = {
 		mainFields: ['browser', 'web', 'module', 'jsnext:main', 'jsnext'],
 		alias: {
 			'@peerpiper/did-ar':
-				process.env.NODE_ENV === 'production' ? './src/lib/index.js' : './src/lib/index', // build needs ./src/lib/index.js, but ssr needs ./src/lib/index
+				process.env.NODE_ENV === 'production' ? './src/lib/index.ts' : './src/lib/index', // build needs ./src/lib/index.js, but ssr needs ./src/lib/index
 			process: 'process/browser',
 			'warp-contracts':
 				process.env.NODE_ENV === 'development' ? 'warp-contracts/web' : 'warp-contracts'
