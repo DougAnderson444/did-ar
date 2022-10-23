@@ -115,6 +115,32 @@ const replaceProperties = {
 await didar.update({ id, ...replaceProperties }); // will change service property of DID Doc
 ```
 
+## Transfer
+
+You can add or transfer controller of this DID by [adding/changing the array of controllers](https://w3c.github.io/did-core/#independent-control).
+
+Be careful! Only the controller can update the DID Doc. Make sure you know what you are doing here.
+
+<a href='https://w3c.github.io/did-core/#independent-control' target="_blank">
+
+![Controllers](./static/figure-c.1-independent-did-controllers.svg 'Controllers')
+
+</a>
+
+Transfer is just an update where the controller is updated.  Send an `update` command with the added/changed controller property:
+
+```js
+const id = did;
+let didDoc; // exsiting DID Doc
+
+const replaceProperties = {
+	...didDoc,
+	controller: ['did:ar:newControllerDID']
+};
+
+await didar.update({ id, ...replaceProperties }); // will change service property of DID Doc
+```
+
 ## Delete
 
 TODO: Implement [ANS-106 Do Not Store Request](https://github.com/ArweaveTeam/arweave-standards/blob/master/ans/ANS-106.md)
