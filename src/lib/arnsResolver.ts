@@ -13,7 +13,7 @@ export async function arnsResolver(
 	return didDoc;
 }
 
-// if resolveing lots of names, use this
+// if resolving lots of names, use this
 // it keeps the warp instance around
 export async function init({ local, CacheOptions }: {local?: boolean; CacheOptions?: CacheOptions } = { local: false, CacheOptions: undefined }) {
 	// make warp
