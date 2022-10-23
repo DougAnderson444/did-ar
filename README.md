@@ -1,10 +1,12 @@
 # DID:AR
 
+I just wrote this, so there will be some changes, improvements and bugs. But feel free to play around with it.
+
 Enables users to create a [smartweave contract](https://arweave.medium.com/introducing-smartweave-building-smart-contracts-with-arweave-1fc85cb3b632) on [Arweave](https://www.arweave.org/) to store their [Decentralized Identity Document](https://www.w3.org/TR/did-core/) (DID Doc).
 
 ✔️📇 Your Own Permanent Identity on Web3
 
-✔️🗃️ Resolve DID from `.ar` name, so `douganderson444.ar` -> `did:ar:....`
+✔️🗃️ [Resolve DID](https://douganderson444.github.io/did-ar/search?name=douganderson444) from `.ar` name, so `douganderson444.ar` -> `did:ar:....`
 
 ✔️💰 No Tokens / cryptocurrency (under 100kb), thanks to [Bundlr](https://bundlr.network/)!
 
@@ -110,6 +112,32 @@ const replaceProperties = {
 			serviceEndpoint: 'https://douganderson444.arweave.dev'
 		}
 	]
+};
+
+await didar.update({ id, ...replaceProperties }); // will change service property of DID Doc
+```
+
+## Transfer
+
+You can add or transfer controller of this DID by [adding/changing the array of controllers](https://w3c.github.io/did-core/#independent-control).
+
+Be careful! Only the controller can update the DID Doc. Make sure you know what you are doing here.
+
+<a href='https://w3c.github.io/did-core/#independent-control' target="_blank">
+
+![Controllers](./static/figure-c.1-independent-did-controllers.svg 'Controllers')
+
+</a>
+
+Transfer is just an update where the controller is updated. Send an `update` command with the added/changed controller property:
+
+```js
+const id = did;
+let didDoc; // exsiting DID Doc
+
+const replaceProperties = {
+	...didDoc,
+	controller: ['did:ar:newControllerDID']
 };
 
 await didar.update({ id, ...replaceProperties }); // will change service property of DID Doc

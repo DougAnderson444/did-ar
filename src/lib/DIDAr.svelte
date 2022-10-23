@@ -71,7 +71,10 @@
 			<div class="m-4 p-4">
 				{#if srcTx}
 					Using existing contract <span class="font-mono bg-gray-50 m-2 p-2 rounded">
-						<a href="https://sonar.warp.cc/#/app/source/{srcTx}#code" target="_blank">{srcTx}🔗↗️</a
+						<a
+							href="https://sonar.warp.cc/#/app/source/{srcTx}#code"
+							target="_blank"
+							rel="noopener noreferrer">{srcTx}🔗↗️</a
 						></span
 					>
 				{:else}
@@ -82,6 +85,7 @@
 			<div
 				class="bg-blue-600 hover:bg-blue-500 shadow rounded-lg m-4 p-4 w-fit text-white cursor-pointer"
 				on:click={handleCreateDID}
+				on:keypress={handleCreateDID}
 			>
 				Use wallet keys to Create new Decentralized Identity, deployed on {local
 					? 'local'

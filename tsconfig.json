@@ -14,7 +14,15 @@
 			"$lib/*": ["./src/lib/*"],
 			"@peerpiper/did-ar": ["./src/lib"],
 			"@peerpiper/did-ar/*": ["./src/lib/*"]
-		}
+		},
+		"plugins": [
+			{
+				"transform": "typescript-transform-extensions",
+				"extensions": {
+					".ts": ".js"
+				}
+			}
+		]
 	}
 	// Path aliases are handled by https://kit.svelte.dev/docs/configuration#alias
 	//

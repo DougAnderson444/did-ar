@@ -7,12 +7,20 @@ import {
 
 // import { base58btc as multibase58btc } from 'multiformats/bases/base58';
 
+export interface DIDAr {
+	warp: WarpFactory;
+	wallet: JWKInterface | 'use_wallet';
+	create: Function;
+	read: Function;
+	update: Function;
+}
+
 export async function init(
 	{ local, wallet = 'use_wallet' }: { local: boolean; wallet?: 'use_wallet' } = {
 		local: false,
 		wallet: 'use_wallet'
 	}
-) {
+): Promise<DIDAr> {
 	const { WarpFactory } = await import('warp-contracts');
 	const warp = local ? WarpFactory.forLocal() : WarpFactory.forMainnet();
 
@@ -66,6 +74,7 @@ export async function create({ RSAPublicKey, Ed25519PublicKey, srcTx = null }) {
 
 	await this.update({
 		id: did,
+		controller: [did],
 		verificationMethod: verificationMethods
 	});
 
@@ -81,11 +90,15 @@ export async function update({ id, ...rest }) {
 	const contractTxId = id.replace(/^did:ar(.*?):/, '');
 	const contract = this.warp.contract(contractTxId);
 	contract.connect(this.wallet);
-	await contract.writeInteraction({
-		...rest,
-		id,
-		function: 'update'
-	});
+	try {
+		await contract.writeInteraction({
+			...rest,
+			id,
+			function: 'update'
+		});
+	} catch (error) {
+		console.error(error);
+	}
 }
 
 export async function read(did) {
