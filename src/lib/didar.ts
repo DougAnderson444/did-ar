@@ -74,7 +74,7 @@ export async function create({ RSAPublicKey, Ed25519PublicKey, srcTx = null }) {
 
 	await this.update({
 		id: did,
-		controller: did,
+		controller: [did],
 		verificationMethod: verificationMethods
 	});
 
