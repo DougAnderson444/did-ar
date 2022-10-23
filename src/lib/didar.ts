@@ -74,6 +74,7 @@ export async function create({ RSAPublicKey, Ed25519PublicKey, srcTx = null }) {
 
 	await this.update({
 		id: did,
+		controller: did,
 		verificationMethod: verificationMethods
 	});
 
@@ -89,11 +90,15 @@ export async function update({ id, ...rest }) {
 	const contractTxId = id.replace(/^did:ar(.*?):/, '');
 	const contract = this.warp.contract(contractTxId);
 	contract.connect(this.wallet);
-	await contract.writeInteraction({
-		...rest,
-		id,
-		function: 'update'
-	});
+	try {
+		await contract.writeInteraction({
+			...rest,
+			id,
+			function: 'update'
+		});
+	} catch (error) {
+		console.error(error);
+	}
 }
 
 export async function read(did) {
