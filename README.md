@@ -121,7 +121,7 @@ await didar.update({ id, ...replaceProperties }); // will change service propert
 
 You can add or transfer controller of this DID by [adding/changing the array of controllers](https://w3c.github.io/did-core/#independent-control).
 
-Be careful! Only the controller can update the DID Doc. Make sure you know what you are doing here.
+⚠️ Be careful! Only the controller can update the DID Doc. Make sure you know what you are doing here. ⚠️
 
 <a href='https://w3c.github.io/did-core/#independent-control' target="_blank">
 
@@ -140,7 +140,7 @@ const replaceProperties = {
 	controller: ['did:ar:newControllerDID']
 };
 
-await didar.update({ id, ...replaceProperties }); // will change service property of DID Doc
+await didar.update({ id, ...replaceProperties }); // will change the controller (ie owner) of DID Doc
 ```
 
 ## Delete
