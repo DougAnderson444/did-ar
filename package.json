@@ -1,6 +1,6 @@
 {
 	"name": "@peerpiper/did-ar",
-	"version": "0.0.12",
+	"version": "0.0.14",
 	"main": "index.js",
 	"module": "index.js",
 	"scripts": {
