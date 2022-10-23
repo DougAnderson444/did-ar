@@ -1,5 +1,7 @@
 # DID:AR
 
+I just wrote this, so there will be some changes, improvements and bugs. But feel free to play around with it.
+
 Enables users to create a [smartweave contract](https://arweave.medium.com/introducing-smartweave-building-smart-contracts-with-arweave-1fc85cb3b632) on [Arweave](https://www.arweave.org/) to store their [Decentralized Identity Document](https://www.w3.org/TR/did-core/) (DID Doc).
 
 ✔️📇 Your Own Permanent Identity on Web3
@@ -127,7 +129,7 @@ Be careful! Only the controller can update the DID Doc. Make sure you know what 
 
 </a>
 
-Transfer is just an update where the controller is updated.  Send an `update` command with the added/changed controller property:
+Transfer is just an update where the controller is updated. Send an `update` command with the added/changed controller property:
 
 ```js
 const id = did;
