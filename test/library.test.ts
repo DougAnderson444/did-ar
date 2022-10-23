@@ -52,10 +52,7 @@ describe('Testing did:ar:*', () => {
 			Ed25519PublicKey
 		});
 
-		// TODO: didar.getDidDoc(did) should return the did doc
 		didDoc = await didar.read(did);
-		// contract = didar.warp.contract(contractTxId);
-		// didDoc = (await contract.readState()).cachedValue.state;
 
 		// should update too
 		didDoc = {
@@ -94,6 +91,8 @@ describe('Testing did:ar:*', () => {
 
 	it('should properly deploy contract with initial state', async () => {
 		expect(didDoc.id).toEqual(did);
+		// did controller array should include the genesis did
+		expect(didDoc.controller).toEqual([did]);
 	});
 
 	it('verificationMethod should have id, type, controller, and publicKeyJwk types', async () => {
@@ -147,5 +146,15 @@ describe('Testing did:ar:*', () => {
 	it('should resolve via resolver', async () => {
 		// expect resolver(did) to return didDoc
 		expect((await resolver.resolve(did)).didDocument).toEqual(didDoc);
+	});
+
+	it('should not let unauthorized wallet update', async () => {
+		// update with a didAr with a new wallet in it
+		const didarNonWriter = await init({ local: true }); // if no wallet set, will use_wallet
+		const { jwk: wallet2, address: address2 } = await didar.warp.testing.generateWallet();
+		didarNonWriter.wallet = wallet; // override 'use_wallet' and set to funded wallet for testing
+
+		// should not let unauthorized wallet update
+		await expect(didarNonWriter.update(didDoc)).rejects;
 	});
 });
