@@ -14,6 +14,7 @@ const config: UserConfig = {
 				process.env.NODE_ENV === 'development' ? 'warp-contracts/web' : 'warp-contracts'
 		}
 	},
+	// @ts-ignore
 	test: {
 		deps: {
 			inline: ['warp-contracts']
