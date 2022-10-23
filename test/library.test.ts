@@ -15,6 +15,8 @@ import {
 
 describe('Testing did:ar:*', () => {
 	let didar;
+	let didar2;
+
 	let wallet;
 	let address: string;
 
@@ -25,7 +27,7 @@ describe('Testing did:ar:*', () => {
 
 	let contract: Contract;
 
-	let did, contractTxId, didDoc;
+	let did, did2, contractTxId, didDoc;
 	let Ed25519PublicKey, encoded;
 	let Ed25519PublicKey2;
 	let resolver;
@@ -83,6 +85,16 @@ describe('Testing did:ar:*', () => {
 		resolver = new Resolver(arResolver);
 
 		didDoc = await didar.read(did);
+
+		// update with a didAr with a new wallet in it
+		didar2 = await init({ local: true }); // if no wallet set, will use_wallet
+		const { jwk: wallet2, address: address2 } = await didar.warp.testing.generateWallet();
+		didar2.wallet = wallet2; // override 'use_wallet' and set to funded wallet for testing
+
+		did2 = await didar.create({
+			RSAPublicKey: wallet2,
+			Ed25519PublicKey
+		});
 	});
 
 	afterAll(async () => {
@@ -149,12 +161,25 @@ describe('Testing did:ar:*', () => {
 	});
 
 	it('should not let unauthorized wallet update', async () => {
-		// update with a didAr with a new wallet in it
-		const didarNonWriter = await init({ local: true }); // if no wallet set, will use_wallet
-		const { jwk: wallet2, address: address2 } = await didar.warp.testing.generateWallet();
-		didarNonWriter.wallet = wallet; // override 'use_wallet' and set to funded wallet for testing
-
 		// should not let unauthorized wallet update
-		await expect(didarNonWriter.update(didDoc)).rejects;
+		await expect(didar2.update(didDoc)).rejects;
+	});
+
+	it('should be able to change the controller ', async () => {
+		// change the controller to a new did
+		didDoc.controller = [did2];
+
+		console.log('### transfer control of didDoc to ', did2, didDoc);
+		// Transfer control
+		await didar.update(didDoc);
+		// should be able to read the new didDoc
+		const newDidDoc = await didar.read(did);
+		expect(newDidDoc).toEqual(didDoc);
+
+		// didar should not be able to update didDoc
+		await expect(didar.update(didDoc)).rejects;
+
+		// expect didar2 should be able to update didDoc
+		await expect(didar2.update(didDoc)).resolves;
 	});
 });

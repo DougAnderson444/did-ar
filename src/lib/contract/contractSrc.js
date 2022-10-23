@@ -55,8 +55,7 @@ export async function handle(state, action) {
 				throw new ContractError('Invalid ID or missing verificationMethod');
 			}
 			state.id = input.id;
-			state.controller = [input.id]; // array allows for multiple controllers, see: https://w3c.github.io/did-core/#independent-control
-
+			state.controller = input?.controller || [input.id];
 			setVerificatioMethod(); // initialize verificationMethods
 		}
 
@@ -65,6 +64,7 @@ export async function handle(state, action) {
 
 		setVerificatioMethod();
 
+		state.controller = input?.controller || state.controller; // array allows for multiple controllers, see: https://w3c.github.io/did-core/#independent-control
 		state.authentication = input?.authentication || state.authentication;
 		state.assertionMethod = input?.assertionMethod || state.assertionMethod;
 		state.keyAgreement = input?.keyAgreement || state.keyAgreement;
