@@ -1,9 +1,10 @@
+import type { CacheOptions } from 'warp-contracts';
 const REGISTRY = 'bLAgYxAdX2Ry-nt6aH2ixgvJXbpsEYm28NgJgyqfs-U';
 
 // if you're only doing a single resolution, use this
 export async function arnsResolver(
 	arnsName: string,
-	{ CacheOptions }: { CacheOptions: { inMemory: boolean } } = {}
+	{ CacheOptions }: { CacheOptions?: CacheOptions } = {}
 ) {
 	const arnsInstance = await init({ CacheOptions });
 	const antContractId = await arnsInstance.resolveARNS(arnsName);
@@ -12,12 +13,12 @@ export async function arnsResolver(
 	return didDoc;
 }
 
-// if resolveing lots of names, use this
+// if resolving lots of names, use this
 // it keeps the warp instance around
-export async function init({ local, CacheOptions } = { local: false, CacheOptions: {} }) {
+export async function init({ local, CacheOptions }: {local?: boolean; CacheOptions?: CacheOptions } = { local: false, CacheOptions: undefined }) {
 	// make warp
 	const { WarpFactory } = await import('warp-contracts');
-	const warp = local ? WarpFactory.forLocal(CacheOptions) : WarpFactory.forMainnet(CacheOptions);
+	const warp = local ? WarpFactory.forLocal(undefined, undefined, CacheOptions) : WarpFactory.forMainnet(CacheOptions);
 
 	return {
 		warp,
