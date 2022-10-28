@@ -15,17 +15,8 @@ export interface DIDAr {
 	update: Function;
 }
 
-export async function init(
-	{ local, wallet = 'use_wallet' }: { local: boolean; wallet?: 'use_wallet' } = {
-		local: false,
-		wallet: 'use_wallet'
-	}
-): Promise<DIDAr> {
-	const { WarpFactory } = await import('warp-contracts');
-	const warp = local ? WarpFactory.forLocal() : WarpFactory.forMainnet();
-
-	console.log('warp.environment', warp.environment);
-
+// supply your own warp instance:
+export function DidArFactory({ warp, wallet }): DIDAr {
 	return {
 		warp,
 		wallet,
@@ -33,6 +24,25 @@ export async function init(
 		read,
 		update
 	};
+}
+
+export async function init(
+	{
+		local,
+		wallet = 'use_wallet',
+		warp = null
+	}: { local: boolean; wallet?: 'use_wallet'; warp: WarpFactory } = {
+		local: false,
+		wallet: 'use_wallet',
+		warp: null
+	}
+): Promise<DIDAr> {
+	const { WarpFactory } = await import('warp-contracts');
+	warp = warp || (local ? WarpFactory.forLocal() : WarpFactory.forMainnet());
+
+	console.log('warp.environment', warp.environment);
+
+	return DidArFactory({ warp, wallet }) as DIDAr;
 }
 
 export async function create({ RSAPublicKey, Ed25519PublicKey, srcTx = null }) {
