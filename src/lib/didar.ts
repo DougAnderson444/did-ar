@@ -28,10 +28,14 @@ export function DidArFactory({ warp, wallet }): DIDAr {
 
 export async function init(
 	{
-		local,
+		local = false,
 		wallet = 'use_wallet',
 		warp = null
-	}: { local: boolean; wallet?: 'use_wallet'; warp: WarpFactory } = {
+	}: {
+		local?: boolean;
+		wallet?: 'use_wallet';
+		warp?: WarpFactory;
+	} = {
 		local: false,
 		wallet: 'use_wallet',
 		warp: null
@@ -39,8 +43,6 @@ export async function init(
 ): Promise<DIDAr> {
 	const { WarpFactory } = await import('warp-contracts');
 	warp = warp || (local ? WarpFactory.forLocal() : WarpFactory.forMainnet());
-
-	console.log('warp.environment', warp.environment);
 
 	return DidArFactory({ warp, wallet }) as DIDAr;
 }
@@ -152,7 +154,8 @@ function generateRSAVerificationMethod({
 		publicKeyJwk: {
 			kty: 'RSA',
 			e: 'AQAB',
-			n: key.n
+			n: key.n,
+			kid: key?.kid || id
 		}
 	};
 }
