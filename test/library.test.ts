@@ -1,5 +1,4 @@
 import { describe, it, assert, expect, test, beforeAll, afterAll } from 'vitest';
-import { WarpFactory, Contract } from 'warp-contracts';
 import ArLocal from 'arlocal';
 
 import { init, createDid, create, update, didArResolver } from '$lib';
@@ -24,8 +23,6 @@ describe('Testing did:ar:*', () => {
 	let arlocal: ArLocal;
 	let warp: Warp;
 	let pst: PstContract;
-
-	let contract: Contract;
 
 	let did, did2, contractTxId, didDoc;
 	let Ed25519PublicKey, encoded;
