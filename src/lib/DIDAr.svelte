@@ -26,7 +26,7 @@
 		const urlParams = new URLSearchParams(window.location.search);
 		local = urlParams.get('local') === 'true';
 
-		const { init } = await import('./didar');
+		const { init } = await import('./didar.ts'); // need extension to vite build component only
 		didar = await init({ local });
 
 		if (local) {
