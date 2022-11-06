@@ -24,7 +24,7 @@ export const buildComponents = async () => {
 			build: {
 				outDir,
 				lib: {
-					entry: path.resolve(__dirname, `./src/lib/${ComponentName}`),
+					entry: path.resolve(__dirname, `./package/${ComponentName}`), // use package so the typescript and css is already preprocessed for us
 					fileName: ComponentName,
 					name: ComponentName
 				},
@@ -59,7 +59,7 @@ export const buildComponents = async () => {
 	// process.exit(0);
 };
 (async () => {
-	console.log('Starting build');
+	console.log('Starting Individual Component build');
 	await buildComponents();
 	console.log('Done');
 	process.exit(0);

@@ -7,7 +7,7 @@
 		"dev": "vite dev",
 		"arlocal": "npx arlocal",
 		"build": "vite build",
-		"build:components": "node buildComponents.mjs",
+		"build:components": "npm run package && node buildComponents.mjs",
 		"preview": "vite preview",
 		"prepare": "ts-patch install -s",
 		"test": "vitest",
