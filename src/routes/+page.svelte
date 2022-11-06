@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { DIDAr } from '@peerpiper/did-ar';
+	import { DIDArComponent } from '@peerpiper/did-ar';
 	import { Web3WalletMenu } from '@peerpiper/web3-wallet-connector';
 	// @ts-ignore
 	import type { handlers } from '@peerpiper/iframe-wallet-sdk';
@@ -34,6 +34,6 @@
 
 <div class="flex flex-col items-center m-2 p-2">
 	{#if ready}
-		<DIDAr {wallet} {RSAPublicKey} {Ed25519PublicKey} bind:srcTx />
+		<DIDArComponent {wallet} {RSAPublicKey} {Ed25519PublicKey} bind:srcTx />
 	{/if}
 </div>
