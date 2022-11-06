@@ -59,6 +59,8 @@ export async function create({
 	srcTx?: string;
 } = {}): Promise<string> {
 	if (!this.warp || !this.wallet) throw new Error('warp and wallet required in parent object');
+	if (!RSAPublicKey || !isRSAKey(RSAPublicKey)) throw new Error('RSAPublicKey required');
+	if (!Ed25519PublicKey) throw new Error('Ed25519PublicKey required');
 
 	// validate srcTx is actually a valid arweave transaction on this network
 	// can't use with warp contracts, need get search for it using arql/ardb tags
