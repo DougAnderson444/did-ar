@@ -3,6 +3,7 @@
 
 	import { onMount } from 'svelte';
 	import { Resolver } from 'did-resolver';
+	import * as didArResolver from './resolver';
 	import JsonTree from 'svelte-json-tree';
 	import { fly } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
@@ -15,7 +16,7 @@
 	let isOpen = false;
 
 	onMount(async () => {
-		const { didArResolver } = await import('.');
+		// const didArResolver = await import('./resolver');
 
 		const arResolver = didArResolver.getResolver();
 		resolver = new Resolver(arResolver);
@@ -85,3 +86,5 @@
 		</details>
 	{/if}
 </div>
+
+<style lang="postcss"></style>

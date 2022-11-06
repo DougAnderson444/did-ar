@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount, createEventDispatcher } from 'svelte';
 	import ResolveDID from './ResolveDID.svelte';
-	import { getOwnerDidArs } from './utils.ts';
+	import { getOwnerDidArs } from './utils';
 
 	// import Arweave from 'arweave';
 
@@ -66,3 +66,5 @@
 		{/if}
 	{/each}
 {/if}
+
+<style lang="postcss"></style>
