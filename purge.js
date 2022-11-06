@@ -37,6 +37,8 @@ svelteFiles.forEach((file) => {
 	const classRegex2 = /class="([^]+?)"/gi;
 	const classStatements2 = restOfFile.match(classRegex2);
 
+	if (!classStatements2 || !classStatements2?.length) return;
+
 	// get the string inside the quotes
 	const classRegex3 = /class="([^]+?)"/i;
 	const classStatements3 = classStatements2.map((statement) => statement.match(classRegex3)[1]);
