@@ -25,7 +25,7 @@ const config = {
 					: {
 							// use @import when building packages for distribution
 							configFilePath: path.resolve(__dirname, './postcss.config.js'),
-							prependData: `@import '${path.resolve('./src/app.css')}';`
+							prependData: `@import '${path.resolve('./src/utilities.css')}';`
 					  }
 		})
 	],
