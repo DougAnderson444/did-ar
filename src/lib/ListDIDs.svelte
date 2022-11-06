@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { onMount, createEventDispatcher } from 'svelte';
 	import ResolveDID from './ResolveDID.svelte';
+	import { getOwnerDidArs } from './utils.ts';
+
 	// import Arweave from 'arweave';
 
 	export let ownerAddress: string;
@@ -28,70 +30,28 @@
 			logging: false
 		});
 
-		arweave
-			.arql({
-				op: 'and',
-				expr1: {
-					op: 'equals',
-					expr1: 'App-Name',
-					expr2: 'SmartWeaveContract'
-				},
-				expr2: {
-					op: 'equals',
-					expr1: 'Uploader-Contract-Owner',
-					expr2: ownerAddress
-				},
-				expr3: {
-					op: 'equals',
-					expr1: 'Content-Type',
-					expr2: 'application/json'
-				},
-				expr4: {
-					op: 'equals',
-					expr1: 'DID-AR',
-					expr2: 'true'
-				}
-			})
-			.then(async (txIds) => {
-				console.log('txIds', txIds);
-				// given a tx id, get the tags for the tx
-				// make a query that looks up this txId
-				// get the contract id from the tags
-				const query = `query {
-								transactions(ids: ["${txIds.join('","')}"]) {
-									edges {
-										node {
-											block {
-												timestamp
-											}
-											tags {
-												name
-												value
-											}
-										}
-									}
-								}
-							}`;
+		let txs = null;
+		try {
+			txs = await getOwnerDidArs({ arweave, dagOwner: ownerAddress });
+		} catch (error) {
+			console.log('DIDAr get failed', error);
+		}
 
-				const res = await arweave.api.post(
-					'graphql',
-					{ query },
-					{ headers: { 'content-type': 'application/json' } }
-				);
+		console.log('txs', txs);
 
-				// for each of the edges, get the values of the array element with the name 'Contract' and return block timestamp toLocaleString
-				allContracts = res.data.data.transactions.edges.map(
-					(edge: { node: { tags: any[]; block: { timestamp: number } } }) => {
-						const contractId = edge.node.tags.find((tag) => tag.name === 'Uploader-Tx-Id').value;
-						return {
-							id: contractId,
-							timestamp: new Date(edge.node?.block?.timestamp * 1000).toLocaleString() || null
-						};
-					}
-				);
+		if (!txs || !txs.length) return;
 
-				dispatch('searchComplete', allContracts);
-			});
+		// for each of the edges, get the values of the array element with the name 'Contract' and return block timestamp toLocaleString
+		allContracts = txs.map((node: { tags: any[]; block: { timestamp: number } }) => {
+			const contractId = node.tags.find((tag) => tag.name === 'Uploader-Tx-Id').value;
+			const timestamp = node?.block?.timestamp * 1000;
+			return {
+				id: contractId,
+				timestamp
+			};
+		});
+
+		dispatch('searchComplete', allContracts);
 	});
 </script>
 
@@ -101,7 +61,7 @@
 		{#if makeDid && contract.id}
 			<ResolveDID did={makeDid(contract.id)}
 				>{makeDid(contract.id)}
-				<div slot="timestamp">{new Date(contract.timestamp * 1000).toLocaleString()}</div>
+				<div slot="timestamp">{new Date(contract.timestamp).toLocaleString()}</div>
 			</ResolveDID>
 		{/if}
 	{/each}

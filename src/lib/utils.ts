@@ -1,4 +1,8 @@
-import { init } from '$lib';
+import { init } from './';
+
+import * as arGQL from 'ar-gql';
+const AR_DAG = 'ArDag';
+const backupEndpoint = 'https://arweave-search.goldsky.com/graphql';
 
 export async function generateTestDid(params: type) {
 	const Ed25519PublicKey = new Uint8Array([
@@ -16,4 +20,60 @@ export async function generateTestDid(params: type) {
 		Ed25519PublicKey
 	});
 	return { did, wallet, address, Ed25519PublicKey };
+}
+
+export async function getOwnerDidArs({ arweave, dagOwner }) {
+	// construct endpoint from arweave api config
+	const { host, port, protocol } = arweave.api.config;
+	const endpoint = `${protocol}://${host}:${port}/graphql`;
+
+	// set arGQL endpoint
+	arGQL.setEndpointUrl(endpoint);
+
+	const query = `query($cursor: String) {
+    transactions(
+    tags: [
+		{ name: "DID-AR", values: ["true"] },
+		{ name: "App-Name", values: ["SmartWeaveContract"] },
+		{ name: "Uploader-Contract-Owner", values: ["${dagOwner}"] },
+	]
+    after: $cursor
+    first: 100
+  ) {
+    pageInfo {
+      hasNextPage
+    }
+    edges {
+      cursor
+      node {
+			block {
+				timestamp
+			}
+			tags {
+				name
+				value
+			}
+		}
+    }
+  }
+}`;
+
+	try {
+		const txs = await arGQL.all(query);
+
+		// for each txs, return an array of only tx?.data?.transactions.edges[0]?.node?.id
+		return txs.map((tx) => tx.node);
+	} catch (error) {
+		console.log('ArGQL failed', error);
+
+		//try backup
+		arGQL.setEndpointUrl(backupEndpoint);
+	}
+
+	try {
+		const txs = await arGQL.all(query);
+		return txs.map((tx) => tx.node);
+	} catch (error) {
+		console.log('ArGQL failed, both gateways down', error);
+	}
 }
