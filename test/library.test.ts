@@ -3,7 +3,7 @@ import ArLocal from 'arlocal';
 
 import { init, createDid, create, update, didArResolver } from '$lib';
 
-import { generateEd25519VerificationMethod } from '$lib/didar.ts';
+import { generateEd25519VerificationMethod } from '$lib/didar'; // .ts
 import { Resolver } from 'did-resolver';
 
 // import { base58btc as multibase58btc } from 'multiformats/bases/base58';
@@ -48,7 +48,8 @@ describe('Testing did:ar:*', () => {
 
 		did = await didar.create({
 			RSAPublicKey: wallet,
-			Ed25519PublicKey
+			Ed25519PublicKey,
+			srcTx: null // dont use production contract
 		});
 
 		didDoc = await didar.read(did);
