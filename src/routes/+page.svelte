@@ -19,13 +19,14 @@
 
 	onMount(async () => {
 		// check if localStorage has  srcTx, else leave as null
-		srcTx = localStorage.getItem('srcTx') || '0BkUeNAfOF6NzYmVJ__4eDdeKoFshJ5BzxOxOitJmXk'; // https://sonar.warp.cc/#/app/source/0BkUeNAfOF6NzYmVJ__4eDdeKoFshJ5BzxOxOitJmXk#code
+		srcTx = localStorage.getItem('srcTx'); // || 'SoPGF6d-5oLy6-uKpJD2J2tT0ytM9LsXWbP5YQnVT6Q'; // https://sonar.warp.cc/#/app/source/0BkUeNAfOF6NzYmVJ__4eDdeKoFshJ5BzxOxOitJmXk#code
 		ready = true;
 	});
 
 	$: if (srcTx) {
 		// svae to localstorage
 		localStorage.setItem('srcTx', srcTx);
+		console.log({ srcTx });
 	}
 </script>
 
