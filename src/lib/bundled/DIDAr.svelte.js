@@ -2172,7 +2172,7 @@ function objType(n) {
   const o = Object.prototype.toString.call(n).slice(8, -1);
   return o === "Object" ? typeof n[Symbol.iterator] == "function" ? "Iterable" : n.constructor.name : o;
 }
-function add_css$3(n) {
+function add_css$3$1(n) {
   append_styles(n, "svelte-1fvwa9c", "span.svelte-1fvwa9c{color:var(--string-color);word-break:break-all;word-wrap:break-word}");
 }
 function create_else_block$1$1(n) {
@@ -2222,10 +2222,10 @@ function instance$6(n, o, a) {
 }
 class JSONStringNode extends SvelteComponent {
   constructor(o) {
-    super(), init$1(this, o, instance$6, create_fragment$6, safe_not_equal, { value: 2 }, add_css$3);
+    super(), init$1(this, o, instance$6, create_fragment$6, safe_not_equal, { value: 2 }, add_css$3$1);
   }
 }
-function add_css$2(n) {
+function add_css$2$1(n) {
   append_styles(n, "svelte-1eamqdt", ".i.svelte-1eamqdt{font-style:italic}.fn.svelte-1eamqdt,.i.svelte-1eamqdt{color:var(--function-color)}");
 }
 function create_summary_slot$3(n) {
@@ -2413,7 +2413,7 @@ function instance$5(n, o, a) {
 }
 class JSONFunctionNode extends SvelteComponent {
   constructor(o) {
-    super(), init$1(this, o, instance$5, create_fragment$5, safe_not_equal, { value: 4 }, add_css$2);
+    super(), init$1(this, o, instance$5, create_fragment$5, safe_not_equal, { value: 4 }, add_css$2$1);
   }
 }
 function create_summary_slot$2(n) {
@@ -2916,8 +2916,8 @@ function fly(n, { delay: o = 0, duration: a = 400, easing: u = cubicOut, x: c = 
 			transform: ${k} translate(${(1 - I) * c}px, ${(1 - I) * p}px);
 			opacity: ${S - B * C}` };
 }
-function add_css$1(n) {
-  append_styles(n, "svelte-12ungvz", ".Clipboard.svelte-12ungvz{margin:0 0.5em;word-break:break-all}.Clipboard-Container.svelte-12ungvz{display:flex}.Clipboard-Container.svelte-12ungvz{cursor:pointer}");
+function add_css$3(n) {
+  append_styles(n, "svelte-9hnxox", ".Clipboard.svelte-9hnxox{margin:0 0.5em;word-break:break-all}.Clipboard-Container.svelte-9hnxox{display:flex;cursor:pointer}");
 }
 const get_default_slot_changes = (n) => ({}), get_default_slot_context = (n) => ({ copy: n[2] });
 function create_else_block$1(n) {
@@ -2952,7 +2952,7 @@ function create_fragment$4(n) {
     return q[1] ? 0 : 1;
   }
   return c = P(n), p = C[c] = I[c](n), { c() {
-    o = element("div"), a = element("div"), B && B.c(), u = space(), p.c(), attr(a, "class", "Clipboard svelte-12ungvz"), attr(o, "class", "Clipboard-Container svelte-12ungvz");
+    o = element("div"), a = element("div"), B && B.c(), u = space(), p.c(), attr(a, "class", "Clipboard svelte-9hnxox"), attr(o, "class", "Clipboard-Container svelte-9hnxox");
   }, m(q, D) {
     insert(q, o, D), append(o, a), B && B.m(a, null), n[6](a), append(o, u), C[c].m(o, null), d = !0, w || (S = [listen(o, "click", n[2]), listen(o, "keypress", n[2])], w = !0);
   }, p(q, [D]) {
@@ -2985,8 +2985,28 @@ function instance$4(n, o, a) {
 }
 class Clipboard extends SvelteComponent {
   constructor(o) {
-    super(), init$1(this, o, instance$4, create_fragment$4, safe_not_equal, { value: 3 }, add_css$1);
+    super(), init$1(this, o, instance$4, create_fragment$4, safe_not_equal, { value: 3 }, add_css$3);
   }
+}
+function add_css$2(n) {
+  append_styles(n, "svelte-bo07e1", `.m-4.svelte-bo07e1{margin:1rem
+}.flex.svelte-bo07e1{display:flex
+}.flex-1.svelte-bo07e1{flex:1 1 0%
+}.cursor-pointer.svelte-bo07e1{cursor:pointer
+}.flex-row.svelte-bo07e1{flex-direction:row
+}.overflow-hidden.svelte-bo07e1{overflow:hidden
+}.rounded-lg.svelte-bo07e1{border-radius:0.5rem
+}.rounded-xl.svelte-bo07e1{border-radius:0.75rem
+}.border.svelte-bo07e1{border-width:1px
+}.bg-\\[\\#42b983\\].svelte-bo07e1{--tw-bg-opacity:1;background-color:rgb(66 185 131 / var(--tw-bg-opacity))
+}.p-4.svelte-bo07e1{padding:1rem
+}.pr-4.svelte-bo07e1{padding-right:1rem
+}.font-semibold.svelte-bo07e1{font-weight:600
+}.font-normal.svelte-bo07e1{font-weight:400
+}.text-white.svelte-bo07e1{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity))
+}.text-blue-700.svelte-bo07e1{--tw-text-opacity:1;color:rgb(29 78 216 / var(--tw-text-opacity))
+}.shadow-lg.svelte-bo07e1{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)
+}`);
 }
 const get_timestamp_slot_changes = (n) => ({}), get_timestamp_slot_context = (n) => ({});
 function create_default_slot$2(n) {
@@ -3010,7 +3030,7 @@ function create_if_block$2(n) {
   let o, a, u, c, p, d, w, S = !n[0].startsWith("did:arlocal"), k = S && create_if_block_2$1(n), B = n[2] && create_if_block_1$2(n);
   return { c() {
     o = element("details"), a = element("summary"), u = text(`Full DID Document\r
-				`), k && k.c(), c = space(), B && B.c(), attr(o, "class", "cursor-pointer overflow-hidden");
+				`), k && k.c(), c = space(), B && B.c(), attr(o, "class", "cursor-pointer overflow-hidden svelte-bo07e1");
   }, m(I, C) {
     insert(I, o, C), append(o, a), append(a, u), k && k.m(a, null), append(o, c), B && B.m(o, null), o.open = n[2], p = !0, d || (w = listen(o, "toggle", n[5]), d = !0);
   }, p(I, C) {
@@ -3028,7 +3048,7 @@ function create_if_block$2(n) {
 function create_if_block_2$1(n) {
   let o, a, u;
   return { c() {
-    o = element("a"), a = text("\u{1F517} View Blockchain Explorer"), attr(o, "class", "text-blue-700"), attr(o, "target", "_blank"), attr(o, "rel", "noopener noreferrer"), attr(o, "href", u = "https://sonar.warp.cc/#/app/contract/" + n[0].replace(/.*?:/g, ""));
+    o = element("a"), a = text("\u{1F517} View Blockchain Explorer"), attr(o, "class", "text-blue-700 svelte-bo07e1"), attr(o, "target", "_blank"), attr(o, "rel", "noopener noreferrer"), attr(o, "href", u = "https://sonar.warp.cc/#/app/contract/" + n[0].replace(/.*?:/g, ""));
   }, m(c, p) {
     insert(c, o, p), append(o, a);
   }, p(c, p) {
@@ -3064,7 +3084,7 @@ function create_fragment$3(n) {
   const k = n[4].timestamp, B = create_slot(k, n, n[6], get_timestamp_slot_context);
   let I = n[1] && ((P = (C = n[1]) == null ? void 0 : C.verificationMethod) == null ? void 0 : P.length) && create_if_block$2(n);
   return { c() {
-    o = element("div"), a = element("div"), u = element("div"), create_component(c.$$.fragment), p = space(), d = element("div"), B && B.c(), w = space(), I && I.c(), attr(u, "class", "flex-1 pr-4"), attr(d, "class", "flex-0 pr-4"), attr(a, "class", "flex flex-row m-4 p-4 bg-[#42b983] text-white font-normal rounded-lg"), attr(o, "class", "m-4 p-4 border rounded-xl shadow-lg font-semibold");
+    o = element("div"), a = element("div"), u = element("div"), create_component(c.$$.fragment), p = space(), d = element("div"), B && B.c(), w = space(), I && I.c(), attr(u, "class", "flex-1 pr-4 svelte-bo07e1"), attr(d, "class", "flex-0 pr-4 svelte-bo07e1"), attr(a, "class", "flex flex-row m-4 p-4 bg-[#42b983] text-white font-normal rounded-lg svelte-bo07e1"), attr(o, "class", "m-4 p-4 border rounded-xl shadow-lg font-semibold svelte-bo07e1");
   }, m(q, D) {
     insert(q, o, D), append(o, a), append(a, u), mount_component(c, u, null), append(a, p), append(a, d), B && B.m(d, null), append(o, w), I && I.m(o, null), S = !0;
   }, p(q, [D]) {
@@ -3101,7 +3121,7 @@ function instance$3(n, o, a) {
 }
 class ResolveDID extends SvelteComponent {
   constructor(o) {
-    super(), init$1(this, o, instance$3, create_fragment$3, safe_not_equal, { did: 0 });
+    super(), init$1(this, o, instance$3, create_fragment$3, safe_not_equal, { did: 0 }, add_css$2);
   }
 }
 var axios$6 = { exports: {} }, axios$5 = { exports: {} }, bind$5 = function(n, o) {
@@ -3915,14 +3935,14 @@ class ListDIDs extends SvelteComponent {
     super(), init$1(this, o, instance$2, create_fragment$2, safe_not_equal, { ownerAddress: 2, local: 3 });
   }
 }
-function add_css(n) {
-  append_styles(n, "svelte-3r23a", ".flex-row.svelte-3r23a{flex-direction:row}.flex.svelte-3r23a{display:flex}.flex-1.svelte-3r23a{flex:1 1 0%}.items-center.svelte-3r23a{align-items:center}.spinner.svelte-3r23a{aspect-ratio:1;height:1em;width:1em;border:0.3em dotted rgba(250, 204, 21);border-radius:9999px;animation:svelte-3r23a-spin 1s linear infinite;background:#fcff23;margin:0.25em}@keyframes svelte-3r23a-spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}");
+function add_css$1(n) {
+  append_styles(n, "svelte-noxgz1", ".flex-row.svelte-noxgz1{flex-direction:row}.flex.svelte-noxgz1{display:flex}.flex-1.svelte-noxgz1{flex:1 1 0%}.items-center.svelte-noxgz1{align-items:center}.select-none.svelte-noxgz1{-webkit-user-select:none;-moz-user-select:none;user-select:none}.spinner.svelte-noxgz1{aspect-ratio:1;height:1em;width:1em;border:0.3em dotted rgba(250, 204, 21);border-radius:9999px;animation:spin 1s linear infinite;background:#fcff23;margin:0.25em}");
 }
 function create_fragment$1(n) {
   let o, a, u, c, p;
   const d = n[1].default, w = create_slot(d, n, n[0], null);
   return { c() {
-    o = element("div"), a = element("div"), u = space(), c = element("div"), w && w.c(), attr(a, "class", "spinner svelte-3r23a"), attr(c, "class", "flex-1 svelte-3r23a"), attr(o, "class", "flex flex-row items-center svelte-3r23a");
+    o = element("div"), a = element("div"), u = space(), c = element("div"), w && w.c(), attr(a, "class", "spinner select-none svelte-noxgz1"), attr(c, "class", "flex-1 svelte-noxgz1"), attr(o, "class", "flex flex-row items-center svelte-noxgz1");
   }, m(S, k) {
     insert(S, o, k), append(o, a), append(o, u), append(o, c), w && w.m(c, null), p = !0;
   }, p(S, [k]) {
@@ -3943,8 +3963,25 @@ function instance$1(n, o, a) {
 }
 class Spinner extends SvelteComponent {
   constructor(o) {
-    super(), init$1(this, o, instance$1, create_fragment$1, safe_not_equal, {}, add_css);
+    super(), init$1(this, o, instance$1, create_fragment$1, safe_not_equal, {}, add_css$1);
   }
+}
+function add_css(n) {
+  append_styles(n, "svelte-1anxyld", `.m-4.svelte-1anxyld{margin:1rem
+}.m-2.svelte-1anxyld{margin:0.5rem
+}.w-fit.svelte-1anxyld{width:-moz-fit-content;width:fit-content
+}.cursor-pointer.svelte-1anxyld{cursor:pointer
+}.rounded.svelte-1anxyld{border-radius:0.25rem
+}.rounded-lg.svelte-1anxyld{border-radius:0.5rem
+}.bg-gray-50.svelte-1anxyld{--tw-bg-opacity:1;background-color:rgb(249 250 251 / var(--tw-bg-opacity))
+}.bg-blue-600.svelte-1anxyld{--tw-bg-opacity:1;background-color:rgb(37 99 235 / var(--tw-bg-opacity))
+}.p-2.svelte-1anxyld{padding:0.5rem
+}.p-4.svelte-1anxyld{padding:1rem
+}.font-mono.svelte-1anxyld{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace
+}.text-white.svelte-1anxyld{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity))
+}.shadow.svelte-1anxyld{--tw-shadow:0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)
+}.hover\\:bg-blue-500.svelte-1anxyld:hover{--tw-bg-opacity:1;background-color:rgb(59 130 246 / var(--tw-bg-opacity))
+}`);
 }
 function create_else_block_1(n) {
   let o;
@@ -4013,7 +4050,7 @@ function create_if_block_1(n) {
   }
   let w = d(n), S = w(n);
   return { c() {
-    o = element("div"), S.c(), a = space(), u = element("div"), u.textContent = "Create Decentralized Identity (DID) with Wallet Keys", attr(o, "class", "m-4"), attr(u, "class", "bg-blue-600 hover:bg-blue-500 shadow rounded-lg m-4 p-4 w-fit text-white cursor-pointer");
+    o = element("div"), S.c(), a = space(), u = element("div"), u.textContent = "Create Decentralized Identity (DID) with Wallet Keys", attr(o, "class", "m-4 svelte-1anxyld"), attr(u, "class", "bg-blue-600 hover:bg-blue-500 shadow rounded-lg m-4 p-4 w-fit text-white cursor-pointer svelte-1anxyld");
   }, m(k, B) {
     insert(k, o, B), S.m(o, null), insert(k, a, B), insert(k, u, B), c || (p = [listen(u, "click", function() {
       is_function(n[7]) && n[7].apply(this, arguments);
@@ -4049,7 +4086,7 @@ function create_else_block(n) {
 function create_if_block_2(n) {
   let o, a, u, c, p, d;
   return { c() {
-    o = text("Using existing contract "), a = element("span"), u = element("a"), c = text(n[1]), p = text("\u{1F517}\u2197\uFE0F"), attr(u, "href", d = "https://sonar.warp.cc/#/app/source/" + n[1] + "#code"), attr(u, "target", "_blank"), attr(u, "rel", "noopener noreferrer"), attr(a, "class", "font-mono bg-gray-50 m-2 p-2 rounded");
+    o = text("Using existing contract "), a = element("span"), u = element("a"), c = text(n[1]), p = text("\u{1F517}\u2197\uFE0F"), attr(u, "href", d = "https://sonar.warp.cc/#/app/source/" + n[1] + "#code"), attr(u, "target", "_blank"), attr(u, "rel", "noopener noreferrer"), attr(a, "class", "font-mono bg-gray-50 m-2 p-2 rounded svelte-1anxyld");
   }, m(w, S) {
     insert(w, o, S), insert(w, a, S), append(a, u), append(u, c), append(u, p);
   }, p(w, S) {
@@ -4128,7 +4165,7 @@ function instance(n, o, a) {
 }
 class DIDAr extends SvelteComponent {
   constructor(o) {
-    super(), init$1(this, o, instance, create_fragment, safe_not_equal, { RSAPublicKey: 9, Ed25519PublicKey: 10, wallet: 0, srcTx: 1 });
+    super(), init$1(this, o, instance, create_fragment, safe_not_equal, { RSAPublicKey: 9, Ed25519PublicKey: 10, wallet: 0, srcTx: 1 }, add_css);
   }
 }
 var cjs = {}, ConsoleLogger$1 = {}, LoggerSettings = {}, exports;
@@ -6243,19 +6280,7 @@ function requireIsBufferBrowser() {
     return n && typeof n == "object" && typeof n.copy == "function" && typeof n.fill == "function" && typeof n.readUInt8 == "function";
   });
 }
-var inherits_browser = { exports: {} }, hasRequiredInherits_browser, hasRequiredUtil;
-function requireInherits_browser() {
-  return hasRequiredInherits_browser || (hasRequiredInherits_browser = 1, typeof Object.create == "function" ? inherits_browser.exports = function(n, o) {
-    o && (n.super_ = o, n.prototype = Object.create(o.prototype, { constructor: { value: n, enumerable: !1, writable: !0, configurable: !0 } }));
-  } : inherits_browser.exports = function(n, o) {
-    if (o) {
-      n.super_ = o;
-      var a = function() {
-      };
-      a.prototype = o.prototype, n.prototype = new a(), n.prototype.constructor = n;
-    }
-  }), inherits_browser.exports;
-}
+var inherits_browser = { exports: {} }, hasRequiredUtil;
 function requireUtil() {
   return hasRequiredUtil || (hasRequiredUtil = 1, function(n) {
     var o = Object.getOwnPropertyDescriptors || function(E) {
@@ -6469,7 +6494,7 @@ function requireUtil() {
     }
     n.log = function() {
       console.log("%s - %s", _(), n.format.apply(n, arguments));
-    }, n.inherits = requireInherits_browser(), n._extend = function(E, T) {
+    }, n.inherits = inherits_browser.exports, n._extend = function(E, T) {
       if (!T || !Z(T))
         return E;
       for (var j = Object.keys(T), L = j.length; L--; )
@@ -6531,7 +6556,16 @@ function requireUtil() {
     };
   }(util)), util;
 }
-Object.defineProperty(utils$p, "__esModule", { value: !0 }), utils$p.b64UrlDecode = utils$p.b64UrlEncode = utils$p.bufferTob64Url = utils$p.bufferTob64 = utils$p.b64UrlToBuffer = utils$p.stringToB64Url = utils$p.stringToBuffer = utils$p.bufferToString = utils$p.b64UrlToString = utils$p.concatBuffers = void 0;
+typeof Object.create == "function" ? inherits_browser.exports = function(n, o) {
+  o && (n.super_ = o, n.prototype = Object.create(o.prototype, { constructor: { value: n, enumerable: !1, writable: !0, configurable: !0 } }));
+} : inherits_browser.exports = function(n, o) {
+  if (o) {
+    n.super_ = o;
+    var a = function() {
+    };
+    a.prototype = o.prototype, n.prototype = new a(), n.prototype.constructor = n;
+  }
+}, Object.defineProperty(utils$p, "__esModule", { value: !0 }), utils$p.b64UrlDecode = utils$p.b64UrlEncode = utils$p.bufferTob64Url = utils$p.bufferTob64 = utils$p.b64UrlToBuffer = utils$p.stringToB64Url = utils$p.stringToBuffer = utils$p.bufferToString = utils$p.b64UrlToString = utils$p.concatBuffers = void 0;
 const B64js$1 = base64Js;
 function concatBuffers$1(n) {
   let o = 0;
@@ -9358,7 +9392,7 @@ if (safer.Buffer.prototype = Buffer$a.prototype, Safer.from && Safer.from !== Ui
   }
 safer.constants || (safer.constants = { MAX_LENGTH: safer.kMaxLength }, safer.kStringMaxLength && (safer.constants.MAX_STRING_LENGTH = safer.kStringMaxLength));
 var safer_1 = safer, reporter = {};
-const inherits$9 = requireInherits_browser();
+const inherits$9 = inherits_browser.exports;
 function Reporter$2(n) {
   this._reporterState = { obj: null, path: [], options: n || {}, errors: [] };
 }
@@ -9410,7 +9444,7 @@ reporter.Reporter = Reporter$2, Reporter$2.prototype.isError = function(n) {
   return this;
 };
 var buffer$4 = {};
-const inherits$8 = requireInherits_browser(), Reporter$1 = reporter.Reporter, Buffer$9 = safer_1.Buffer;
+const inherits$8 = inherits_browser.exports, Reporter$1 = reporter.Reporter, Buffer$9 = safer_1.Buffer;
 function DecoderBuffer$2(n, o) {
   Reporter$1.call(this, o), Buffer$9.isBuffer(n) ? (this.base = n, this.offset = 0, this.length = n.length) : this.error("Input not Buffer");
 }
@@ -9713,7 +9747,7 @@ var der$2 = {};
   }
   n.tagClass = { 0: "universal", 1: "application", 2: "context", 3: "private" }, n.tagClassByName = o(n.tagClass), n.tag = { 0: "end", 1: "bool", 2: "int", 3: "bitstr", 4: "octstr", 5: "null_", 6: "objid", 7: "objDesc", 8: "external", 9: "real", 10: "enum", 11: "embed", 12: "utf8str", 13: "relativeOid", 16: "seq", 17: "set", 18: "numstr", 19: "printstr", 20: "t61str", 21: "videostr", 22: "ia5str", 23: "utctime", 24: "gentime", 25: "graphstr", 26: "iso646str", 27: "genstr", 28: "unistr", 29: "charstr", 30: "bmpstr" }, n.tagByName = o(n.tag);
 })(der$2);
-const inherits$7 = requireInherits_browser(), Buffer$8 = safer_1.Buffer, Node$1 = node, der$1 = der$2;
+const inherits$7 = inherits_browser.exports, Buffer$8 = safer_1.Buffer, Node$1 = node, der$1 = der$2;
 function DEREncoder$1(n) {
   this.enc = "der", this.name = n.name, this.entity = n, this.tree = new DERNode$1(), this.tree._init(n.body);
 }
@@ -9848,7 +9882,7 @@ DEREncoder$1.prototype.encode = function(n, o) {
       return !1;
   return !0;
 };
-const inherits$6 = requireInherits_browser(), DEREncoder = der_1$1;
+const inherits$6 = inherits_browser.exports, DEREncoder = der_1$1;
 function PEMEncoder(n) {
   DEREncoder.call(this, n), this.enc = "pem";
 }
@@ -9865,7 +9899,7 @@ PEMEncoder.prototype.encode = function(n, o) {
   o.der = der_1$1, o.pem = pem$1;
 }();
 var decoders = {};
-const inherits$5 = requireInherits_browser(), bignum = bn$3.exports, DecoderBuffer = buffer$4.DecoderBuffer, Node = node, der = der$2;
+const inherits$5 = inherits_browser.exports, bignum = bn$3.exports, DecoderBuffer = buffer$4.DecoderBuffer, Node = node, der = der$2;
 function DERDecoder$1(n) {
   this.enc = "der", this.name = n.name, this.entity = n, this.tree = new DERNode(), this.tree._init(n.body);
 }
@@ -10017,7 +10051,7 @@ DERDecoder$1.prototype.decode = function(n, o) {
 }, DERNode.prototype._use = function(n, o) {
   return typeof n == "function" && (n = n(o)), n._getDecoder("der").tree;
 };
-const inherits$4 = requireInherits_browser(), Buffer$7 = safer_1.Buffer, DERDecoder = der_1;
+const inherits$4 = inherits_browser.exports, Buffer$7 = safer_1.Buffer, DERDecoder = der_1;
 function PEMDecoder(n) {
   DERDecoder.call(this, n), this.enc = "pem";
 }
@@ -10050,7 +10084,7 @@ PEMDecoder.prototype.decode = function(n, o) {
   const o = decoders;
   o.der = der_1, o.pem = pem;
 }(), function(n) {
-  const o = encoders, a = decoders, u = requireInherits_browser();
+  const o = encoders, a = decoders, u = inherits_browser.exports;
   function c(p, d) {
     this.name = p, this.body = d, this.decoders = {}, this.encoders = {};
   }
@@ -17911,7 +17945,7 @@ BaseCurve.prototype.point = function() {
     o = o.dbl();
   return o;
 };
-var utils$j = utils$m, BN$7 = bn$2.exports, inherits$3 = requireInherits_browser(), Base$2 = base, assert$d = utils$j.assert;
+var utils$j = utils$m, BN$7 = bn$2.exports, inherits$3 = inherits_browser.exports, Base$2 = base, assert$d = utils$j.assert;
 function ShortCurve(n) {
   Base$2.call(this, "short", n), this.a = new BN$7(n.a, 16).toRed(this.red), this.b = new BN$7(n.b, 16).toRed(this.red), this.tinv = this.two.redInvm(), this.zeroA = this.a.fromRed().cmpn(0) === 0, this.threeA = this.a.fromRed().sub(this.p).cmpn(-3) === 0, this.endo = this._getEndomorphism(n), this._endoWnafT1 = new Array(4), this._endoWnafT2 = new Array(4);
 }
@@ -18196,7 +18230,7 @@ ShortCurve.prototype._getEndomorphism = function(n) {
 }, JPoint.prototype.isInfinity = function() {
   return this.z.cmpn(0) === 0;
 };
-var BN$6 = bn$2.exports, inherits$2 = requireInherits_browser(), Base$1 = base, utils$i = utils$m;
+var BN$6 = bn$2.exports, inherits$2 = inherits_browser.exports, Base$1 = base, utils$i = utils$m;
 function MontCurve(n) {
   Base$1.call(this, "mont", n), this.a = new BN$6(n.a, 16).toRed(this.red), this.b = new BN$6(n.b, 16).toRed(this.red), this.i4 = new BN$6(4).toRed(this.red).redInvm(), this.two = new BN$6(2).toRed(this.red), this.a24 = this.i4.redMul(this.a.redAdd(this.two));
 }
@@ -18248,7 +18282,7 @@ MontCurve.prototype.validate = function(n) {
 }, Point$1.prototype.getX = function() {
   return this.normalize(), this.x.fromRed();
 };
-var utils$h = utils$m, BN$5 = bn$2.exports, inherits$1 = requireInherits_browser(), Base = base, assert$c = utils$h.assert;
+var utils$h = utils$m, BN$5 = bn$2.exports, inherits$1 = inherits_browser.exports, Base = base, assert$c = utils$h.assert;
 function EdwardsCurve(n) {
   this.twisted = (0 | n.a) != 1, this.mOneA = this.twisted && (0 | n.a) == -1, this.extended = this.mOneA, Base.call(this, "edwards", n), this.a = new BN$5(n.a, 16).umod(this.red.m), this.a = this.a.toRed(this.red), this.c = new BN$5(n.c, 16).toRed(this.red), this.c2 = this.c.redSqr(), this.d = new BN$5(n.d, 16).toRed(this.red), this.dd = this.d.redAdd(this.d), assert$c(!this.twisted || this.c.fromRed().cmpn(1) === 0), this.oneC = (0 | n.c) == 1;
 }
@@ -18351,7 +18385,7 @@ EdwardsCurve.prototype._mulA = function(n) {
       return !0;
   }
 }, Point.prototype.toP = Point.prototype.normalize, Point.prototype.mixedAdd = Point.prototype.add, e = curve, e.base = base, e.short = short, e.mont = mont, e.edwards = edwards;
-var curves$2 = {}, hash$2 = {}, utils$g = {}, assert$b = minimalisticAssert, inherits = requireInherits_browser();
+var curves$2 = {}, hash$2 = {}, utils$g = {}, assert$b = minimalisticAssert, inherits = inherits_browser.exports;
 function isSurrogatePair(n, o) {
   return (64512 & n.charCodeAt(o)) == 55296 && !(o < 0 || o + 1 >= n.length) && (64512 & n.charCodeAt(o + 1)) == 56320;
 }
