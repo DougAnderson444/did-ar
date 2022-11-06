@@ -1,6 +1,6 @@
 {
 	"name": "@peerpiper/did-ar",
-	"version": "0.0.15",
+	"version": "0.0.16",
 	"main": "index.js",
 	"module": "index.js",
 	"scripts": {
@@ -12,7 +12,8 @@
 		"test": "vitest",
 		"test:ui": "vitest --ui",
 		"coverage": "vitest run --coverage",
-		"package": "svelte-package",
+		"package": "svelte-kit sync && svelte-package && npm run purge:package",
+		"purge:package": "node purge.js",
 		"publish:package": "npm publish ./package --access public",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
@@ -28,6 +29,7 @@
 		"@vitest/ui": "^0.24.0",
 		"arlocal": "^1.1.58",
 		"autoprefixer": "^10.4.12",
+		"globby": "^13.1.2",
 		"postcss": "^8.4.17",
 		"prettier": "^2.6.2",
 		"prettier-plugin-svelte": "^2.7.0",
