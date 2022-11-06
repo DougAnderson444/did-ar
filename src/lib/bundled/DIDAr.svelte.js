@@ -409,7 +409,7 @@ function destroy_component(n, o) {
 function make_dirty(n, o) {
   n.$$.dirty[0] === -1 && (dirty_components.push(n), schedule_update(), n.$$.dirty.fill(0)), n.$$.dirty[o / 31 | 0] |= 1 << o % 31;
 }
-function init$2(n, o, a, u, c, p, d, w = [-1]) {
+function init$1(n, o, a, u, c, p, d, w = [-1]) {
   const S = current_component;
   set_current_component(n);
   const k = n.$$ = { fragment: null, ctx: null, props: p, update: noop$2, not_equal: c, bound: blank_object(), on_mount: [], on_destroy: [], on_disconnect: [], before_update: [], after_update: [], context: new Map(o.context || (S ? S.$$.context : [])), callbacks: blank_object(), dirty: w, skip_bound: !1, root: o.target || S.$$.root };
@@ -442,6 +442,245 @@ class SvelteComponent {
   $set(o) {
     this.$$set && !is_empty(o) && (this.$$.skip_bound = !0, this.$$set(o), this.$$.skip_bound = !1);
   }
+}
+const id = null, controller = null, verificationMethod = [], authentication = ["#key-0", "#key-1"], assertionMethod = [], keyAgreement = [], capabilityInvocation = [], capabilityDelegation = [], service = [], initialState = { "@context": ["https://www.w3.org/ns/did/v1", "https://w3id.org/security/suites/ed25519-2018/v1"], id, controller, verificationMethod, authentication, assertionMethod, keyAgreement, capabilityInvocation, capabilityDelegation, service }, contractSrc = `export async function handle(state, action) {\r
+	const input = action.input;\r
+	const caller = action.caller;\r
+\r
+	function setVerificatioMethod() {\r
+		if (input.verificationMethod) {\r
+			if (!Array.isArray(input.verificationMethod) || input.verificationMethod.length === 0) {\r
+				throw new ContractError('verificationMethod must be an array with at least one method');\r
+			}\r
+			state.verificationMethod = input.verificationMethod;\r
+		}\r
+	}\r
+\r
+	async function assertController() {\r
+		let flattenedAddresses;\r
+		try {\r
+			// Need to read the state of each of the controllers' dids and get the Arweave addresses and compare it to the caller value\r
+			const promises = state.controller.map(async (did) => await getDidArweaveAddresses(did));\r
+			const addresses = await Promise.all(promises);\r
+			flattenedAddresses = addresses.flat();\r
+		} catch (error) {\r
+			throw new ContractError('Invalid controller');\r
+		}\r
+\r
+		// check if caller is listed in the array of state.controllers\r
+		if (!flattenedAddresses.includes(caller)) {\r
+			throw new ContractError('Caller is not a controller of this DID');\r
+		}\r
+	}\r
+\r
+	async function getDidArweaveAddresses(did) {\r
+		// remove did:ar*: from the start of the did string\r
+		const contractId = did.replace(/^did:ar(.*?):/, '');\r
+\r
+		// check if contractId match this contract\r
+		let didDoc =\r
+			contractId == SmartWeave.contract.id\r
+				? state\r
+				: await SmartWeave.contracts.readContractState(contractId);\r
+\r
+		// get all publicKeyJwk.kty === "RSA" from verificationMethod\r
+		const promises = didDoc.verificationMethod\r
+			.filter((method) => method.publicKeyJwk.kty === 'RSA')\r
+			.map(\r
+				async (method) => await SmartWeave.arweave.wallets.ownerToAddress(method.publicKeyJwk.n)\r
+			);\r
+\r
+		return await Promise.all(promises);\r
+	}\r
+\r
+	if (input.function === 'update') {\r
+		// Intialize = 1st update, only if caller is Contract owner\r
+		if (!state.id && caller === SmartWeave.contract.owner) {\r
+			if (!input?.id?.startsWith('did:ar') || !input.verificationMethod.length) {\r
+				throw new ContractError('Invalid ID or missing verificationMethod');\r
+			}\r
+			state.id = input.id;\r
+			state.controller = input?.controller || [input.id];\r
+			setVerificatioMethod(); // initialize verificationMethods\r
+		}\r
+\r
+		// after initial update, any controller can make updates\r
+		await assertController(state, caller);\r
+\r
+		setVerificatioMethod();\r
+\r
+		state.controller = input?.controller || state.controller; // array allows for multiple controllers, see: https://w3c.github.io/did-core/#independent-control\r
+		state.authentication = input?.authentication || state.authentication;\r
+		state.assertionMethod = input?.assertionMethod || state.assertionMethod;\r
+		state.keyAgreement = input?.keyAgreement || state.keyAgreement;\r
+		state.capabilityInvocation = input?.capabilityInvocation || state.capabilityInvocation;\r
+		state.capabilityDelegation = input?.capabilityDelegation || state.capabilityDelegation;\r
+		state.service = input?.service || state.service;\r
+	}\r
+\r
+	return { state };\r
+}\r
+`;
+var commonjsGlobal = typeof globalThis < "u" ? globalThis : typeof window < "u" ? window : typeof global < "u" ? global : typeof self < "u" ? self : {};
+function getDefaultExportFromCjs(n) {
+  return n && n.__esModule && Object.prototype.hasOwnProperty.call(n, "default") ? n.default : n;
+}
+function getAugmentedNamespace(n) {
+  var o = n.default;
+  if (typeof o == "function") {
+    var a = function() {
+      return o.apply(this, arguments);
+    };
+    a.prototype = o.prototype;
+  } else
+    a = {};
+  return Object.defineProperty(a, "__esModule", { value: !0 }), Object.keys(n).forEach(function(u) {
+    var c = Object.getOwnPropertyDescriptor(n, u);
+    Object.defineProperty(a, u, c.get ? c : { enumerable: !0, get: function() {
+      return n[u];
+    } });
+  }), a;
+}
+var base64 = {}, __extends = commonjsGlobal && commonjsGlobal.__extends || (extendStatics = function(n, o) {
+  return extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(a, u) {
+    a.__proto__ = u;
+  } || function(a, u) {
+    for (var c in u)
+      u.hasOwnProperty(c) && (a[c] = u[c]);
+  }, extendStatics(n, o);
+}, function(n, o) {
+  function a() {
+    this.constructor = n;
+  }
+  extendStatics(n, o), n.prototype = o === null ? Object.create(o) : (a.prototype = o.prototype, new a());
+}), extendStatics;
+Object.defineProperty(base64, "__esModule", { value: !0 });
+var INVALID_BYTE = 256, Coder = function() {
+  function n(o) {
+    o === void 0 && (o = "="), this._paddingCharacter = o;
+  }
+  return n.prototype.encodedLength = function(o) {
+    return this._paddingCharacter ? (o + 2) / 3 * 4 | 0 : (8 * o + 5) / 6 | 0;
+  }, n.prototype.encode = function(o) {
+    for (var a = "", u = 0; u < o.length - 2; u += 3) {
+      var c = o[u] << 16 | o[u + 1] << 8 | o[u + 2];
+      a += this._encodeByte(c >>> 18 & 63), a += this._encodeByte(c >>> 12 & 63), a += this._encodeByte(c >>> 6 & 63), a += this._encodeByte(c >>> 0 & 63);
+    }
+    var p = o.length - u;
+    return p > 0 && (c = o[u] << 16 | (p === 2 ? o[u + 1] << 8 : 0), a += this._encodeByte(c >>> 18 & 63), a += this._encodeByte(c >>> 12 & 63), a += p === 2 ? this._encodeByte(c >>> 6 & 63) : this._paddingCharacter || "", a += this._paddingCharacter || ""), a;
+  }, n.prototype.maxDecodedLength = function(o) {
+    return this._paddingCharacter ? o / 4 * 3 | 0 : (6 * o + 7) / 8 | 0;
+  }, n.prototype.decodedLength = function(o) {
+    return this.maxDecodedLength(o.length - this._getPaddingLength(o));
+  }, n.prototype.decode = function(o) {
+    if (o.length === 0)
+      return new Uint8Array(0);
+    for (var a = this._getPaddingLength(o), u = o.length - a, c = new Uint8Array(this.maxDecodedLength(u)), p = 0, d = 0, w = 0, S = 0, k = 0, B = 0, I = 0; d < u - 4; d += 4)
+      S = this._decodeChar(o.charCodeAt(d + 0)), k = this._decodeChar(o.charCodeAt(d + 1)), B = this._decodeChar(o.charCodeAt(d + 2)), I = this._decodeChar(o.charCodeAt(d + 3)), c[p++] = S << 2 | k >>> 4, c[p++] = k << 4 | B >>> 2, c[p++] = B << 6 | I, w |= S & INVALID_BYTE, w |= k & INVALID_BYTE, w |= B & INVALID_BYTE, w |= I & INVALID_BYTE;
+    if (d < u - 1 && (S = this._decodeChar(o.charCodeAt(d)), k = this._decodeChar(o.charCodeAt(d + 1)), c[p++] = S << 2 | k >>> 4, w |= S & INVALID_BYTE, w |= k & INVALID_BYTE), d < u - 2 && (B = this._decodeChar(o.charCodeAt(d + 2)), c[p++] = k << 4 | B >>> 2, w |= B & INVALID_BYTE), d < u - 3 && (I = this._decodeChar(o.charCodeAt(d + 3)), c[p++] = B << 6 | I, w |= I & INVALID_BYTE), w !== 0)
+      throw new Error("Base64Coder: incorrect characters for decoding");
+    return c;
+  }, n.prototype._encodeByte = function(o) {
+    var a = o;
+    return a += 65, a += 25 - o >>> 8 & 6, a += 51 - o >>> 8 & -75, a += 61 - o >>> 8 & -15, a += 62 - o >>> 8 & 3, String.fromCharCode(a);
+  }, n.prototype._decodeChar = function(o) {
+    var a = INVALID_BYTE;
+    return a += (42 - o & o - 44) >>> 8 & -INVALID_BYTE + o - 43 + 62, a += (46 - o & o - 48) >>> 8 & -INVALID_BYTE + o - 47 + 63, a += (47 - o & o - 58) >>> 8 & -INVALID_BYTE + o - 48 + 52, (a += (64 - o & o - 91) >>> 8 & -INVALID_BYTE + o - 65 + 0) + ((96 - o & o - 123) >>> 8 & -INVALID_BYTE + o - 97 + 26);
+  }, n.prototype._getPaddingLength = function(o) {
+    var a = 0;
+    if (this._paddingCharacter) {
+      for (var u = o.length - 1; u >= 0 && o[u] === this._paddingCharacter; u--)
+        a++;
+      if (o.length < 4 || a > 2)
+        throw new Error("Base64Coder: incorrect padding");
+    }
+    return a;
+  }, n;
+}();
+base64.Coder = Coder;
+var stdCoder = new Coder();
+function encode$4(n) {
+  return stdCoder.encode(n);
+}
+function decode$2(n) {
+  return stdCoder.decode(n);
+}
+base64.encode = encode$4, base64.decode = decode$2;
+var URLSafeCoder = function(n) {
+  function o() {
+    return n !== null && n.apply(this, arguments) || this;
+  }
+  return __extends(o, n), o.prototype._encodeByte = function(a) {
+    var u = a;
+    return u += 65, u += 25 - a >>> 8 & 6, u += 51 - a >>> 8 & -75, u += 61 - a >>> 8 & -13, u += 62 - a >>> 8 & 49, String.fromCharCode(u);
+  }, o.prototype._decodeChar = function(a) {
+    var u = INVALID_BYTE;
+    return u += (44 - a & a - 46) >>> 8 & -INVALID_BYTE + a - 45 + 62, u += (94 - a & a - 96) >>> 8 & -INVALID_BYTE + a - 95 + 63, u += (47 - a & a - 58) >>> 8 & -INVALID_BYTE + a - 48 + 52, (u += (64 - a & a - 91) >>> 8 & -INVALID_BYTE + a - 65 + 0) + ((96 - a & a - 123) >>> 8 & -INVALID_BYTE + a - 97 + 26);
+  }, o;
+}(Coder);
+base64.URLSafeCoder = URLSafeCoder;
+var urlSafeCoder = new URLSafeCoder();
+function encodeURLSafe(n) {
+  return urlSafeCoder.encode(n);
+}
+var encodeURLSafe_1 = base64.encodeURLSafe = encodeURLSafe;
+function decodeURLSafe(n) {
+  return urlSafeCoder.decode(n);
+}
+base64.decodeURLSafe = decodeURLSafe, base64.encodedLength = function(n) {
+  return stdCoder.encodedLength(n);
+}, base64.maxDecodedLength = function(n) {
+  return stdCoder.maxDecodedLength(n);
+}, base64.decodedLength = function(n) {
+  return stdCoder.decodedLength(n);
+};
+const SRC_TX = "SoPGF6d-5oLy6-uKpJD2J2tT0ytM9LsXWbP5YQnVT6Q";
+function DidArFactory({ warp: n, wallet: o }) {
+  return { warp: n, wallet: o, create, read: read$2, update };
+}
+async function init({ local: n = !1, wallet: o = "use_wallet", warp: a = null } = { local: !1, wallet: "use_wallet", warp: null }) {
+  const { WarpFactory: u } = await Promise.resolve().then(() => index$1);
+  return DidArFactory({ warp: a = a || (n ? u.forLocal() : u.forMainnet()), wallet: o });
+}
+async function create({ RSAPublicKey: n, Ed25519PublicKey: o, srcTx: a = SRC_TX } = {}) {
+  if (!this.warp || !this.wallet)
+    throw new Error("warp and wallet required in parent object");
+  const u = [{ name: "DID-AR", value: "true" }], { contractTxId: c, srcTxId: p } = a ? await this.warp.createContract.deployFromSourceTx({ wallet: this.wallet, initState: JSON.stringify(initialState), srcTxId: a, tags: u }) : await this.warp.createContract.deploy({ wallet: this.wallet, initState: JSON.stringify(initialState), src: contractSrc, tags: u }), d = this.warp.environment == "mainnet" ? `did:ar:${c}` : `did:arlocal:${c}`, w = await generateVerificationMethods({ did: d, publicKeys: [n, o] });
+  return await this.update({ id: d, controller: [d], verificationMethod: w }), d;
+}
+async function update({ id: n, ...o }) {
+  if (!this.warp || !this.wallet)
+    throw new Error("warp and wallet required in parent object");
+  const a = n.replace(/^did:ar(.*?):/, ""), u = this.warp.contract(a);
+  u.connect(this.wallet);
+  try {
+    await u.writeInteraction({ ...o, id: n, function: "update" });
+  } catch (c) {
+    console.error(c);
+  }
+}
+async function read$2(n) {
+  if (!this.warp || !this.wallet)
+    throw new Error("warp and wallet required in parent object");
+  const o = n.replace(/^did:ar(.*?):/, "");
+  return (await this.warp.contract(o).readState()).cachedValue.state;
+}
+async function generateVerificationMethods({ did: n, publicKeys: o }) {
+  const a = [];
+  for (let u = 0; u < o.length; u++) {
+    const c = o[u], p = `${n}#key-${u}`, d = isRSAKey(c) ? generateRSAVerificationMethod({ did: n, id: p, key: c }) : generateEd25519VerificationMethod({ did: n, id: p, key: c });
+    a.push(d);
+  }
+  return a;
+}
+function generateRSAVerificationMethod({ did: n, id: o, key: a }) {
+  return { id: o, type: "JsonWebKey2020", controller: n, publicKeyJwk: { kty: "RSA", e: "AQAB", n: a.n, kid: (a == null ? void 0 : a.kid) || o } };
+}
+function generateEd25519VerificationMethod({ did: n, id: o, key: a }) {
+  return { id: o, type: "JsonWebKey2020", controller: n, publicKeyJwk: { kty: "OKP", crv: "Ed25519", x: encodeURLSafe_1(new Uint8Array(a)) } };
+}
+function isRSAKey(n) {
+  return n.kty === "RSA";
 }
 function _catch(n, o) {
   try {
@@ -532,6 +771,17 @@ class Resolver {
     }
   }
 }
+function getResolver() {
+  return { ar: async function(n, o, a, u) {
+    const { WarpFactory: c } = await Promise.resolve().then(() => index$1);
+    let p = c.forMainnet();
+    return { didResolutionMetadata: { contentType: "application/did+ld+json" }, didDocument: (await p.contract(o.id).readState()).cachedValue.state, didDocumentMetadata: {} };
+  }, arlocal: async function(n, o, a, u) {
+    const { WarpFactory: c } = await Promise.resolve().then(() => index$1);
+    let p = c.forLocal();
+    return { didResolutionMetadata: { contentType: "application/did+ld+json" }, didDocument: (await p.contract(o.id).readState()).cachedValue.state, didDocumentMetadata: {} };
+  } };
+}
 const subscriber_queue = [];
 function readable(n, o) {
   return { subscribe: writable(n, o).subscribe };
@@ -614,7 +864,7 @@ function instance$i(n, o, a) {
 }
 class JSONArrow extends SvelteComponent {
   constructor(o) {
-    super(), init$2(this, o, instance$i, create_fragment$i, safe_not_equal, { expanded: 0 }, add_css$8);
+    super(), init$1(this, o, instance$i, create_fragment$i, safe_not_equal, { expanded: 0 }, add_css$8);
   }
 }
 function create_fragment$h(n) {
@@ -642,7 +892,7 @@ function instance$h(n, o, a) {
 }
 class Summary extends SvelteComponent {
   constructor(o) {
-    super(), init$2(this, o, instance$h, create_fragment$h, safe_not_equal, {});
+    super(), init$1(this, o, instance$h, create_fragment$h, safe_not_equal, {});
   }
 }
 function create_fragment$g(n) {
@@ -671,7 +921,7 @@ function instance$g(n, o, a) {
 }
 class Expandable extends SvelteComponent {
   constructor(o) {
-    super(), init$2(this, o, instance$g, create_fragment$g, safe_not_equal, { expanded: 0, key: 1 });
+    super(), init$1(this, o, instance$g, create_fragment$g, safe_not_equal, { expanded: 0, key: 1 });
   }
 }
 function add_css$7(n) {
@@ -885,7 +1135,7 @@ function instance$f(n, o, a) {
 }
 class JSONNested extends SvelteComponent {
   constructor(o) {
-    super(), init$2(this, o, instance$f, create_fragment$f, safe_not_equal, { keys: 0, shouldShowColon: 1, expandKey: 2, defaultExpanded: 10 }, add_css$7);
+    super(), init$1(this, o, instance$f, create_fragment$f, safe_not_equal, { keys: 0, shouldShowColon: 1, expandKey: 2, defaultExpanded: 10 }, add_css$7);
   }
 }
 function add_css$6(n) {
@@ -1023,7 +1273,7 @@ function instance$e(n, o, a) {
 }
 class PreviewList extends SvelteComponent {
   constructor(o) {
-    super(), init$2(this, o, instance$e, create_fragment$e, safe_not_equal, { list: 0, hasMore: 1, label: 2, prefix: 3, postfix: 4 }, add_css$6);
+    super(), init$1(this, o, instance$e, create_fragment$e, safe_not_equal, { list: 0, hasMore: 1, label: 2, prefix: 3, postfix: 4 }, add_css$6);
   }
 }
 function create_summary_slot$8(n) {
@@ -1127,7 +1377,7 @@ function instance$d(n, o, a) {
 }
 class JSONObjectNode extends SvelteComponent {
   constructor(o) {
-    super(), init$2(this, o, instance$d, create_fragment$d, safe_not_equal, { value: 0 });
+    super(), init$1(this, o, instance$d, create_fragment$d, safe_not_equal, { value: 0 });
   }
 }
 function create_summary_slot$7(n) {
@@ -1232,7 +1482,7 @@ function instance$c(n, o, a) {
 }
 class JSONArrayNode extends SvelteComponent {
   constructor(o) {
-    super(), init$2(this, o, instance$c, create_fragment$c, safe_not_equal, { value: 0 });
+    super(), init$1(this, o, instance$c, create_fragment$c, safe_not_equal, { value: 0 });
   }
 }
 function create_summary_slot$6(n) {
@@ -1413,7 +1663,7 @@ function instance$b(n, o, a) {
 }
 class JSONIterableArrayNode extends SvelteComponent {
   constructor(o) {
-    super(), init$2(this, o, instance$b, create_fragment$b, safe_not_equal, { value: 0, nodeType: 1 });
+    super(), init$1(this, o, instance$b, create_fragment$b, safe_not_equal, { value: 0, nodeType: 1 });
   }
 }
 function create_summary_slot$5(n) {
@@ -1646,7 +1896,7 @@ function instance$a(n, o, a) {
 }
 class JSONIterableMapNode extends SvelteComponent {
   constructor(o) {
-    super(), init$2(this, o, instance$a, create_fragment$a, safe_not_equal, { value: 0 });
+    super(), init$1(this, o, instance$a, create_fragment$a, safe_not_equal, { value: 0 });
   }
 }
 function add_css$5(n) {
@@ -1672,7 +1922,7 @@ function instance$9(n, o, a) {
 }
 class JSONValueNode extends SvelteComponent {
   constructor(o) {
-    super(), init$2(this, o, instance$9, create_fragment$9, safe_not_equal, { value: 0, nodeType: 1 }, add_css$5);
+    super(), init$1(this, o, instance$9, create_fragment$9, safe_not_equal, { value: 0, nodeType: 1 }, add_css$5);
   }
 }
 function add_css$4(n) {
@@ -1791,7 +2041,7 @@ function instance$8(n, o, a) {
 }
 class ErrorStack extends SvelteComponent {
   constructor(o) {
-    super(), init$2(this, o, instance$8, create_fragment$8, safe_not_equal, { stack: 0 }, add_css$4);
+    super(), init$1(this, o, instance$8, create_fragment$8, safe_not_equal, { stack: 0 }, add_css$4);
   }
 }
 function create_summary_slot$4(n) {
@@ -1915,7 +2165,7 @@ function instance$7(n, o, a) {
 }
 class ErrorNode extends SvelteComponent {
   constructor(o) {
-    super(), init$2(this, o, instance$7, create_fragment$7, safe_not_equal, { value: 0 });
+    super(), init$1(this, o, instance$7, create_fragment$7, safe_not_equal, { value: 0 });
   }
 }
 function objType(n) {
@@ -1972,7 +2222,7 @@ function instance$6(n, o, a) {
 }
 class JSONStringNode extends SvelteComponent {
   constructor(o) {
-    super(), init$2(this, o, instance$6, create_fragment$6, safe_not_equal, { value: 2 }, add_css$3);
+    super(), init$1(this, o, instance$6, create_fragment$6, safe_not_equal, { value: 2 }, add_css$3);
   }
 }
 function add_css$2(n) {
@@ -2163,7 +2413,7 @@ function instance$5(n, o, a) {
 }
 class JSONFunctionNode extends SvelteComponent {
   constructor(o) {
-    super(), init$2(this, o, instance$5, create_fragment$5, safe_not_equal, { value: 4 }, add_css$2);
+    super(), init$1(this, o, instance$5, create_fragment$5, safe_not_equal, { value: 4 }, add_css$2);
   }
 }
 function create_summary_slot$2(n) {
@@ -2280,7 +2530,7 @@ function instance$4$1(n, o, a) {
 }
 class JSONSvelteStoreNode extends SvelteComponent {
   constructor(o) {
-    super(), init$2(this, o, instance$4$1, create_fragment$4$1, safe_not_equal, { value: 0 });
+    super(), init$1(this, o, instance$4$1, create_fragment$4$1, safe_not_equal, { value: 0 });
   }
 }
 function create_summary_slot$1(n) {
@@ -2389,7 +2639,7 @@ function instance$3$1(n, o, a) {
 }
 class TypedArrayNode extends SvelteComponent {
   constructor(o) {
-    super(), init$2(this, o, instance$3$1, create_fragment$3$1, safe_not_equal, { value: 0, nodeType: 1 });
+    super(), init$1(this, o, instance$3$1, create_fragment$3$1, safe_not_equal, { value: 0, nodeType: 1 });
   }
 }
 function add_css$1$1(n) {
@@ -2475,7 +2725,7 @@ function instance$2$1(n, o, a) {
 }
 class RegExpNode extends SvelteComponent {
   constructor(o) {
-    super(), init$2(this, o, instance$2$1, create_fragment$2$1, safe_not_equal, { value: 0 }, add_css$1$1);
+    super(), init$1(this, o, instance$2$1, create_fragment$2$1, safe_not_equal, { value: 0 }, add_css$1$1);
   }
 }
 function create_fragment$1$1(n) {
@@ -2577,7 +2827,7 @@ function instance$1$1(n, o, a) {
 }
 class JSONNode extends SvelteComponent {
   constructor(o) {
-    super(), init$2(this, o, instance$1$1, create_fragment$1$1, safe_not_equal, { value: 0 });
+    super(), init$1(this, o, instance$1$1, create_fragment$1$1, safe_not_equal, { value: 0 });
   }
 }
 function getShouldExpandNode({ defaultExpandedPaths: n, defaultExpandedLevel: o }) {
@@ -2646,7 +2896,7 @@ function instance$j(n, o, a) {
 }
 class Root extends SvelteComponent {
   constructor(o) {
-    super(), init$2(this, o, instance$j, create_fragment$j, safe_not_equal, { value: 0, defaultExpandedPaths: 2, defaultExpandedLevel: 3 }, add_css$9);
+    super(), init$1(this, o, instance$j, create_fragment$j, safe_not_equal, { value: 0, defaultExpandedPaths: 2, defaultExpandedLevel: 3 }, add_css$9);
   }
 }
 function cubicOut(n) {
@@ -2735,7 +2985,7 @@ function instance$4(n, o, a) {
 }
 class Clipboard extends SvelteComponent {
   constructor(o) {
-    super(), init$2(this, o, instance$4, create_fragment$4, safe_not_equal, { value: 3 }, add_css$1);
+    super(), init$1(this, o, instance$4, create_fragment$4, safe_not_equal, { value: 3 }, add_css$1);
   }
 }
 const get_timestamp_slot_changes = (n) => ({}), get_timestamp_slot_context = (n) => ({});
@@ -2839,8 +3089,8 @@ function instance$3(n, o, a) {
     }, 5e3), c;
   }
   return onMount(async () => {
-    const { didArResolver: B } = await Promise.resolve().then(() => index$4), I = B.getResolver();
-    a(3, u = new Resolver(I));
+    const B = getResolver();
+    a(3, u = new Resolver(B));
   }), n.$$set = (B) => {
     "did" in B && a(0, w = B.did), "$$scope" in B && a(6, d = B.$$scope);
   }, n.$$.update = () => {
@@ -2851,280 +3101,9 @@ function instance$3(n, o, a) {
 }
 class ResolveDID extends SvelteComponent {
   constructor(o) {
-    super(), init$2(this, o, instance$3, create_fragment$3, safe_not_equal, { did: 0 });
+    super(), init$1(this, o, instance$3, create_fragment$3, safe_not_equal, { did: 0 });
   }
 }
-const id = null, controller = null, verificationMethod = [], authentication = ["#key-0", "#key-1"], assertionMethod = [], keyAgreement = [], capabilityInvocation = [], capabilityDelegation = [], service = [], initialState = { "@context": ["https://www.w3.org/ns/did/v1", "https://w3id.org/security/suites/ed25519-2018/v1"], id, controller, verificationMethod, authentication, assertionMethod, keyAgreement, capabilityInvocation, capabilityDelegation, service }, contractSrc = `export async function handle(state, action) {\r
-	const input = action.input;\r
-	const caller = action.caller;\r
-\r
-	function setVerificatioMethod() {\r
-		if (input.verificationMethod) {\r
-			if (!Array.isArray(input.verificationMethod) || input.verificationMethod.length === 0) {\r
-				throw new ContractError('verificationMethod must be an array with at least one method');\r
-			}\r
-			state.verificationMethod = input.verificationMethod;\r
-		}\r
-	}\r
-\r
-	async function assertController() {\r
-		let flattenedAddresses;\r
-		try {\r
-			// Need to read the state of each of the controllers' dids and get the Arweave addresses and compare it to the caller value\r
-			const promises = state.controller.map(async (did) => await getDidArweaveAddresses(did));\r
-			const addresses = await Promise.all(promises);\r
-			flattenedAddresses = addresses.flat();\r
-		} catch (error) {\r
-			throw new ContractError('Invalid controller');\r
-		}\r
-\r
-		// check if caller is listed in the array of state.controllers\r
-		if (!flattenedAddresses.includes(caller)) {\r
-			throw new ContractError('Caller is not a controller of this DID');\r
-		}\r
-	}\r
-\r
-	async function getDidArweaveAddresses(did) {\r
-		// remove did:ar*: from the start of the did string\r
-		const contractId = did.replace(/^did:ar(.*?):/, '');\r
-\r
-		// check if contractId match this contract\r
-		let didDoc =\r
-			contractId == SmartWeave.contract.id\r
-				? state\r
-				: await SmartWeave.contracts.readContractState(contractId);\r
-\r
-		// get all publicKeyJwk.kty === "RSA" from verificationMethod\r
-		const promises = didDoc.verificationMethod\r
-			.filter((method) => method.publicKeyJwk.kty === 'RSA')\r
-			.map(\r
-				async (method) => await SmartWeave.arweave.wallets.ownerToAddress(method.publicKeyJwk.n)\r
-			);\r
-\r
-		return await Promise.all(promises);\r
-	}\r
-\r
-	if (input.function === 'update') {\r
-		// Intialize = 1st update, only if caller is Contract owner\r
-		if (!state.id && caller === SmartWeave.contract.owner) {\r
-			if (!input?.id?.startsWith('did:ar') || !input.verificationMethod.length) {\r
-				throw new ContractError('Invalid ID or missing verificationMethod');\r
-			}\r
-			state.id = input.id;\r
-			state.controller = input?.controller || [input.id];\r
-			setVerificatioMethod(); // initialize verificationMethods\r
-		}\r
-\r
-		// after initial update, any controller can make updates\r
-		await assertController(state, caller);\r
-\r
-		setVerificatioMethod();\r
-\r
-		state.controller = input?.controller || state.controller; // array allows for multiple controllers, see: https://w3c.github.io/did-core/#independent-control\r
-		state.authentication = input?.authentication || state.authentication;\r
-		state.assertionMethod = input?.assertionMethod || state.assertionMethod;\r
-		state.keyAgreement = input?.keyAgreement || state.keyAgreement;\r
-		state.capabilityInvocation = input?.capabilityInvocation || state.capabilityInvocation;\r
-		state.capabilityDelegation = input?.capabilityDelegation || state.capabilityDelegation;\r
-		state.service = input?.service || state.service;\r
-	}\r
-\r
-	return { state };\r
-}\r
-`;
-var commonjsGlobal = typeof globalThis < "u" ? globalThis : typeof window < "u" ? window : typeof global < "u" ? global : typeof self < "u" ? self : {};
-function getDefaultExportFromCjs(n) {
-  return n && n.__esModule && Object.prototype.hasOwnProperty.call(n, "default") ? n.default : n;
-}
-function getAugmentedNamespace(n) {
-  var o = n.default;
-  if (typeof o == "function") {
-    var a = function() {
-      return o.apply(this, arguments);
-    };
-    a.prototype = o.prototype;
-  } else
-    a = {};
-  return Object.defineProperty(a, "__esModule", { value: !0 }), Object.keys(n).forEach(function(u) {
-    var c = Object.getOwnPropertyDescriptor(n, u);
-    Object.defineProperty(a, u, c.get ? c : { enumerable: !0, get: function() {
-      return n[u];
-    } });
-  }), a;
-}
-var base64 = {}, __extends = commonjsGlobal && commonjsGlobal.__extends || (extendStatics = function(n, o) {
-  return extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function(a, u) {
-    a.__proto__ = u;
-  } || function(a, u) {
-    for (var c in u)
-      u.hasOwnProperty(c) && (a[c] = u[c]);
-  }, extendStatics(n, o);
-}, function(n, o) {
-  function a() {
-    this.constructor = n;
-  }
-  extendStatics(n, o), n.prototype = o === null ? Object.create(o) : (a.prototype = o.prototype, new a());
-}), extendStatics;
-Object.defineProperty(base64, "__esModule", { value: !0 });
-var INVALID_BYTE = 256, Coder = function() {
-  function n(o) {
-    o === void 0 && (o = "="), this._paddingCharacter = o;
-  }
-  return n.prototype.encodedLength = function(o) {
-    return this._paddingCharacter ? (o + 2) / 3 * 4 | 0 : (8 * o + 5) / 6 | 0;
-  }, n.prototype.encode = function(o) {
-    for (var a = "", u = 0; u < o.length - 2; u += 3) {
-      var c = o[u] << 16 | o[u + 1] << 8 | o[u + 2];
-      a += this._encodeByte(c >>> 18 & 63), a += this._encodeByte(c >>> 12 & 63), a += this._encodeByte(c >>> 6 & 63), a += this._encodeByte(c >>> 0 & 63);
-    }
-    var p = o.length - u;
-    return p > 0 && (c = o[u] << 16 | (p === 2 ? o[u + 1] << 8 : 0), a += this._encodeByte(c >>> 18 & 63), a += this._encodeByte(c >>> 12 & 63), a += p === 2 ? this._encodeByte(c >>> 6 & 63) : this._paddingCharacter || "", a += this._paddingCharacter || ""), a;
-  }, n.prototype.maxDecodedLength = function(o) {
-    return this._paddingCharacter ? o / 4 * 3 | 0 : (6 * o + 7) / 8 | 0;
-  }, n.prototype.decodedLength = function(o) {
-    return this.maxDecodedLength(o.length - this._getPaddingLength(o));
-  }, n.prototype.decode = function(o) {
-    if (o.length === 0)
-      return new Uint8Array(0);
-    for (var a = this._getPaddingLength(o), u = o.length - a, c = new Uint8Array(this.maxDecodedLength(u)), p = 0, d = 0, w = 0, S = 0, k = 0, B = 0, I = 0; d < u - 4; d += 4)
-      S = this._decodeChar(o.charCodeAt(d + 0)), k = this._decodeChar(o.charCodeAt(d + 1)), B = this._decodeChar(o.charCodeAt(d + 2)), I = this._decodeChar(o.charCodeAt(d + 3)), c[p++] = S << 2 | k >>> 4, c[p++] = k << 4 | B >>> 2, c[p++] = B << 6 | I, w |= S & INVALID_BYTE, w |= k & INVALID_BYTE, w |= B & INVALID_BYTE, w |= I & INVALID_BYTE;
-    if (d < u - 1 && (S = this._decodeChar(o.charCodeAt(d)), k = this._decodeChar(o.charCodeAt(d + 1)), c[p++] = S << 2 | k >>> 4, w |= S & INVALID_BYTE, w |= k & INVALID_BYTE), d < u - 2 && (B = this._decodeChar(o.charCodeAt(d + 2)), c[p++] = k << 4 | B >>> 2, w |= B & INVALID_BYTE), d < u - 3 && (I = this._decodeChar(o.charCodeAt(d + 3)), c[p++] = B << 6 | I, w |= I & INVALID_BYTE), w !== 0)
-      throw new Error("Base64Coder: incorrect characters for decoding");
-    return c;
-  }, n.prototype._encodeByte = function(o) {
-    var a = o;
-    return a += 65, a += 25 - o >>> 8 & 6, a += 51 - o >>> 8 & -75, a += 61 - o >>> 8 & -15, a += 62 - o >>> 8 & 3, String.fromCharCode(a);
-  }, n.prototype._decodeChar = function(o) {
-    var a = INVALID_BYTE;
-    return a += (42 - o & o - 44) >>> 8 & -INVALID_BYTE + o - 43 + 62, a += (46 - o & o - 48) >>> 8 & -INVALID_BYTE + o - 47 + 63, a += (47 - o & o - 58) >>> 8 & -INVALID_BYTE + o - 48 + 52, (a += (64 - o & o - 91) >>> 8 & -INVALID_BYTE + o - 65 + 0) + ((96 - o & o - 123) >>> 8 & -INVALID_BYTE + o - 97 + 26);
-  }, n.prototype._getPaddingLength = function(o) {
-    var a = 0;
-    if (this._paddingCharacter) {
-      for (var u = o.length - 1; u >= 0 && o[u] === this._paddingCharacter; u--)
-        a++;
-      if (o.length < 4 || a > 2)
-        throw new Error("Base64Coder: incorrect padding");
-    }
-    return a;
-  }, n;
-}();
-base64.Coder = Coder;
-var stdCoder = new Coder();
-function encode$4(n) {
-  return stdCoder.encode(n);
-}
-function decode$2(n) {
-  return stdCoder.decode(n);
-}
-base64.encode = encode$4, base64.decode = decode$2;
-var URLSafeCoder = function(n) {
-  function o() {
-    return n !== null && n.apply(this, arguments) || this;
-  }
-  return __extends(o, n), o.prototype._encodeByte = function(a) {
-    var u = a;
-    return u += 65, u += 25 - a >>> 8 & 6, u += 51 - a >>> 8 & -75, u += 61 - a >>> 8 & -13, u += 62 - a >>> 8 & 49, String.fromCharCode(u);
-  }, o.prototype._decodeChar = function(a) {
-    var u = INVALID_BYTE;
-    return u += (44 - a & a - 46) >>> 8 & -INVALID_BYTE + a - 45 + 62, u += (94 - a & a - 96) >>> 8 & -INVALID_BYTE + a - 95 + 63, u += (47 - a & a - 58) >>> 8 & -INVALID_BYTE + a - 48 + 52, (u += (64 - a & a - 91) >>> 8 & -INVALID_BYTE + a - 65 + 0) + ((96 - a & a - 123) >>> 8 & -INVALID_BYTE + a - 97 + 26);
-  }, o;
-}(Coder);
-base64.URLSafeCoder = URLSafeCoder;
-var urlSafeCoder = new URLSafeCoder();
-function encodeURLSafe(n) {
-  return urlSafeCoder.encode(n);
-}
-var encodeURLSafe_1 = base64.encodeURLSafe = encodeURLSafe;
-function decodeURLSafe(n) {
-  return urlSafeCoder.decode(n);
-}
-base64.decodeURLSafe = decodeURLSafe, base64.encodedLength = function(n) {
-  return stdCoder.encodedLength(n);
-}, base64.maxDecodedLength = function(n) {
-  return stdCoder.maxDecodedLength(n);
-}, base64.decodedLength = function(n) {
-  return stdCoder.decodedLength(n);
-};
-const SRC_TX = "SoPGF6d-5oLy6-uKpJD2J2tT0ytM9LsXWbP5YQnVT6Q";
-function DidArFactory({ warp: n, wallet: o }) {
-  return { warp: n, wallet: o, create, read: read$2, update };
-}
-async function init$1({ local: n = !1, wallet: o = "use_wallet", warp: a = null } = { local: !1, wallet: "use_wallet", warp: null }) {
-  const { WarpFactory: u } = await Promise.resolve().then(() => index$1);
-  return DidArFactory({ warp: a = a || (n ? u.forLocal() : u.forMainnet()), wallet: o });
-}
-async function create({ RSAPublicKey: n, Ed25519PublicKey: o, srcTx: a = SRC_TX } = {}) {
-  if (!this.warp || !this.wallet)
-    throw new Error("warp and wallet required in parent object");
-  const u = [{ name: "DID-AR", value: "true" }], { contractTxId: c, srcTxId: p } = a ? await this.warp.createContract.deployFromSourceTx({ wallet: this.wallet, initState: JSON.stringify(initialState), srcTxId: a, tags: u }) : await this.warp.createContract.deploy({ wallet: this.wallet, initState: JSON.stringify(initialState), src: contractSrc, tags: u }), d = this.warp.environment == "mainnet" ? `did:ar:${c}` : `did:arlocal:${c}`, w = await generateVerificationMethods({ did: d, publicKeys: [n, o] });
-  return await this.update({ id: d, controller: [d], verificationMethod: w }), d;
-}
-async function update({ id: n, ...o }) {
-  if (!this.warp || !this.wallet)
-    throw new Error("warp and wallet required in parent object");
-  const a = n.replace(/^did:ar(.*?):/, ""), u = this.warp.contract(a);
-  u.connect(this.wallet);
-  try {
-    await u.writeInteraction({ ...o, id: n, function: "update" });
-  } catch (c) {
-    console.error(c);
-  }
-}
-async function read$2(n) {
-  if (!this.warp || !this.wallet)
-    throw new Error("warp and wallet required in parent object");
-  const o = n.replace(/^did:ar(.*?):/, "");
-  return (await this.warp.contract(o).readState()).cachedValue.state;
-}
-async function generateVerificationMethods({ did: n, publicKeys: o }) {
-  const a = [];
-  for (let u = 0; u < o.length; u++) {
-    const c = o[u], p = `${n}#key-${u}`, d = isRSAKey(c) ? generateRSAVerificationMethod({ did: n, id: p, key: c }) : generateEd25519VerificationMethod({ did: n, id: p, key: c });
-    a.push(d);
-  }
-  return a;
-}
-function generateRSAVerificationMethod({ did: n, id: o, key: a }) {
-  return { id: o, type: "JsonWebKey2020", controller: n, publicKeyJwk: { kty: "RSA", e: "AQAB", n: a.n, kid: (a == null ? void 0 : a.kid) || o } };
-}
-function generateEd25519VerificationMethod({ did: n, id: o, key: a }) {
-  return { id: o, type: "JsonWebKey2020", controller: n, publicKeyJwk: { kty: "OKP", crv: "Ed25519", x: encodeURLSafe_1(new Uint8Array(a)) } };
-}
-function isRSAKey(n) {
-  return n.kty === "RSA";
-}
-const didar = Object.freeze(Object.defineProperty({ __proto__: null, DidArFactory, init: init$1, create, update, read: read$2, generateVerificationMethods, generateEd25519VerificationMethod }, Symbol.toStringTag, { value: "Module" })), REGISTRY = "bLAgYxAdX2Ry-nt6aH2ixgvJXbpsEYm28NgJgyqfs-U";
-async function arnsResolver(n, { CacheOptions: o } = {}) {
-  const a = await init({ CacheOptions: o }), u = await a.resolveARNS(n), c = await a.resolveANT(u);
-  return await a.resolveDID(c);
-}
-async function init({ local: n, CacheOptions: o } = { local: !1, CacheOptions: void 0 }) {
-  const { WarpFactory: a } = await Promise.resolve().then(() => index$1);
-  return { warp: n ? a.forLocal(void 0, void 0, o) : a.forMainnet(o), resolveARNS, resolveANT, resolveDID };
-}
-async function resolveARNS(n) {
-  return (await this.warp.contract(REGISTRY).readState()).cachedValue.state.records[n];
-}
-async function resolveANT(n) {
-  return `did:ar:${(await this.warp.contract(n).readState()).cachedValue.state.records["did-ar"].transactionId}`;
-}
-async function resolveDID(n) {
-  const o = n.replace("did:ar:", "");
-  return (await this.warp.contract(o).readState()).cachedValue.state;
-}
-const arnsResolver$1 = Object.freeze(Object.defineProperty({ __proto__: null, arnsResolver, init, resolveARNS, resolveANT, resolveDID }, Symbol.toStringTag, { value: "Module" }));
-function getResolver() {
-  return { ar: async function(n, o, a, u) {
-    const { WarpFactory: c } = await Promise.resolve().then(() => index$1);
-    let p = c.forMainnet();
-    return { didResolutionMetadata: { contentType: "application/did+ld+json" }, didDocument: (await p.contract(o.id).readState()).cachedValue.state, didDocumentMetadata: {} };
-  }, arlocal: async function(n, o, a, u) {
-    const { WarpFactory: c } = await Promise.resolve().then(() => index$1);
-    let p = c.forLocal();
-    return { didResolutionMetadata: { contentType: "application/did+ld+json" }, didDocument: (await p.contract(o.id).readState()).cachedValue.state, didDocumentMetadata: {} };
-  } };
-}
-const resolver = Object.freeze(Object.defineProperty({ __proto__: null, getResolver }, Symbol.toStringTag, { value: "Module" })), index$4 = Object.freeze(Object.defineProperty({ __proto__: null, DIDArComponent: DIDAr, init: init$1, create, update, arns: arnsResolver$1, arnsResolver, didArResolver: resolver }, Symbol.toStringTag, { value: "Module" }));
 var axios$6 = { exports: {} }, axios$5 = { exports: {} }, bind$5 = function(n, o) {
   return function() {
     for (var a = new Array(arguments.length), u = 0; u < a.length; u++)
@@ -3933,7 +3912,7 @@ function instance$2(n, o, a) {
 }
 class ListDIDs extends SvelteComponent {
   constructor(o) {
-    super(), init$2(this, o, instance$2, create_fragment$2, safe_not_equal, { ownerAddress: 2, local: 3 });
+    super(), init$1(this, o, instance$2, create_fragment$2, safe_not_equal, { ownerAddress: 2, local: 3 });
   }
 }
 function add_css(n) {
@@ -3964,7 +3943,7 @@ function instance$1(n, o, a) {
 }
 class Spinner extends SvelteComponent {
   constructor(o) {
-    super(), init$2(this, o, instance$1, create_fragment$1, safe_not_equal, {}, add_css);
+    super(), init$1(this, o, instance$1, create_fragment$1, safe_not_equal, {}, add_css);
   }
 }
 function create_else_block_1(n) {
@@ -4129,16 +4108,14 @@ function create_fragment(n) {
 function instance(n, o, a) {
   let u, c, p, d, { RSAPublicKey: w } = o, { Ed25519PublicKey: S } = o, { wallet: k } = o, { srcTx: B = "SoPGF6d-5oLy6-uKpJD2J2tT0ytM9LsXWbP5YQnVT6Q" } = o, I = !1, C = !1, P = !1;
   return onMount(async () => {
-    I = new URLSearchParams(window.location.search).get("local") === "true";
-    const { init: D } = await Promise.resolve().then(() => didar);
-    if (a(2, u = await D({ local: I })), I) {
-      const { jwk: z, address: F } = await u.warp.testing.generateWallet();
-      a(2, u.wallet = z, u), a(6, p = F), console.log("test address", F);
+    if (I = new URLSearchParams(window.location.search).get("local") === "true", a(2, u = await init({ local: I })), I) {
+      const { jwk: D, address: z } = await u.warp.testing.generateWallet();
+      a(2, u.wallet = D, u), a(6, p = z), console.log("test address", z);
     }
     a(7, d = async function() {
       a(5, P = !0), a(3, c = await u.create({ RSAPublicKey: w, Ed25519PublicKey: S, srcTx: B }));
-      const z = setInterval(async () => {
-        a(6, p), a(0, k), C && (clearInterval(z), a(5, P = !1));
+      const D = setInterval(async () => {
+        a(6, p), a(0, k), C && (clearInterval(D), a(5, P = !1));
       }, 400);
     });
   }), n.$$set = (q) => {
@@ -4151,7 +4128,7 @@ function instance(n, o, a) {
 }
 class DIDAr extends SvelteComponent {
   constructor(o) {
-    super(), init$2(this, o, instance, create_fragment, safe_not_equal, { RSAPublicKey: 9, Ed25519PublicKey: 10, wallet: 0, srcTx: 1 });
+    super(), init$1(this, o, instance, create_fragment, safe_not_equal, { RSAPublicKey: 9, Ed25519PublicKey: 10, wallet: 0, srcTx: 1 });
   }
 }
 var cjs = {}, ConsoleLogger$1 = {}, LoggerSettings = {}, exports;
