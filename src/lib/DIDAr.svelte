@@ -8,8 +8,8 @@
 	import Spinner from './Spinner.svelte';
 	import type { DIDAr } from './didar';
 
-	export let RSAPublicKey: { kty: string; n: string; e: string; kid?: string };
-	export let Ed25519PublicKey: Uint8Array;
+	export let RSAPublicKey: { kty: string; n: string; e: string; kid?: string } | null;
+	export let Ed25519PublicKey: Uint8Array | null;
 	export let wallet: handlers;
 	export let srcTx: string | null = 'SoPGF6d-5oLy6-uKpJD2J2tT0ytM9LsXWbP5YQnVT6Q'; // https://sonar.warp.cc/#/app/source/SoPGF6d-5oLy6-uKpJD2J2tT0ytM9LsXWbP5YQnVT6Q#code
 
@@ -39,6 +39,10 @@
 
 		handleCreateDID = async function () {
 			creating = true;
+
+			if (!RSAPublicKey) RSAPublicKey = await wallet.arweaveWalletAPI.getActivePublicKey();
+			if (!Ed25519PublicKey) Ed25519PublicKey = await wallet.proxcryptor.getPublicKey();
+
 			did = await didar.create({
 				RSAPublicKey,
 				Ed25519PublicKey,
@@ -55,7 +59,12 @@
 		};
 	});
 
-	$: if (wallet) (async () => (ownerAddress = await wallet.arweaveWalletAPI.getActiveAddress()))();
+	$: if (wallet)
+		(async () => {
+			ownerAddress = await wallet.arweaveWalletAPI.getActiveAddress();
+			if (!RSAPublicKey) RSAPublicKey = await wallet.arweaveWalletAPI.getActivePublicKey();
+			if (!Ed25519PublicKey) Ed25519PublicKey = await wallet.proxcryptor.getPublicKey();
+		})();
 
 	async function searchComplete(e: CustomEvent) {
 		console.log('searchComplete', e.detail);
@@ -72,12 +81,13 @@
 		{#if !creating && !existing && handleCreateDID}
 			<div class="m-4">
 				{#if srcTx}
-					Using existing contract <span class="font-mono bg-gray-50 m-2 p-2 rounded">
-						<a
-							href="https://sonar.warp.cc/#/app/source/{srcTx}#code"
-							target="_blank"
-							rel="noopener noreferrer">{srcTx}🔗↗️</a
-						></span
+					Using existing contract
+					<a
+						href="https://sonar.warp.cc/#/app/source/{srcTx}#code"
+						target="_blank"
+						rel="noopener noreferrer"
+					>
+						<span class="font-mono m-2 p-2 rounded"> {srcTx}🔗↗️</span></a
 					>
 				{:else}
 					We will deploy a new Smart Contract to manage your DID.
