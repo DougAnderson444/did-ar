@@ -7,6 +7,8 @@ import {
 
 // import { base58btc as multibase58btc } from 'multiformats/bases/base58';
 
+const SRC_TX = 'SoPGF6d-5oLy6-uKpJD2J2tT0ytM9LsXWbP5YQnVT6Q';
+
 export interface DIDAr {
 	warp: WarpFactory;
 	wallet: JWKInterface | 'use_wallet';
@@ -47,7 +49,15 @@ export async function init(
 	return DidArFactory({ warp, wallet }) as DIDAr;
 }
 
-export async function create({ RSAPublicKey, Ed25519PublicKey, srcTx = null }) {
+export async function create({
+	RSAPublicKey,
+	Ed25519PublicKey,
+	srcTx = SRC_TX
+}: {
+	RSAPublicKey?: JWKInterface;
+	Ed25519PublicKey?: Uint8Array;
+	srcTx?: string;
+} = {}): Promise<string> {
 	if (!this.warp || !this.wallet) throw new Error('warp and wallet required in parent object');
 
 	// validate srcTx is actually a valid arweave transaction on this network
