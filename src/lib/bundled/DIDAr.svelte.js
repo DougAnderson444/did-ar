@@ -3124,7 +3124,7 @@ function getResolver() {
     return { didResolutionMetadata: { contentType: "application/did+ld+json" }, didDocument: (await p.contract(o.id).readState()).cachedValue.state, didDocumentMetadata: {} };
   } };
 }
-const resolver = Object.freeze(Object.defineProperty({ __proto__: null, getResolver }, Symbol.toStringTag, { value: "Module" })), index$4 = Object.freeze(Object.defineProperty({ __proto__: null, DIDAr, init: init$1, create, update, arns: arnsResolver$1, arnsResolver, didArResolver: resolver }, Symbol.toStringTag, { value: "Module" }));
+const resolver = Object.freeze(Object.defineProperty({ __proto__: null, getResolver }, Symbol.toStringTag, { value: "Module" })), index$4 = Object.freeze(Object.defineProperty({ __proto__: null, DIDArComponent: DIDAr, init: init$1, create, update, arns: arnsResolver$1, arnsResolver, didArResolver: resolver }, Symbol.toStringTag, { value: "Module" }));
 var axios$6 = { exports: {} }, axios$5 = { exports: {} }, bind$5 = function(n, o) {
   return function() {
     for (var a = new Array(arguments.length), u = 0; u < a.length; u++)
