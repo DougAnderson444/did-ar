@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	// @ts-ignore
 	import type { handlers } from '@peerpiper/iframe-wallet-sdk';
+	import { init } from './didar';
 
 	import ListDIDs from './ListDIDs.svelte';
 	import Spinner from './Spinner.svelte';
@@ -26,7 +27,7 @@
 		const urlParams = new URLSearchParams(window.location.search);
 		local = urlParams.get('local') === 'true';
 
-		const { init } = await import('./didar.ts'); // need extension to vite build component only
+		// const { init } = await import('./didar.ts'); // need extension to vite build component only
 		didar = await init({ local });
 
 		if (local) {
