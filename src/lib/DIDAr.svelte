@@ -5,11 +5,12 @@
 
 	import ListDIDs from './ListDIDs.svelte';
 	import Spinner from './Spinner.svelte';
+	import type { DIDAr } from './didar';
 
 	export let RSAPublicKey: { kty: string; n: string; e: string; kid?: string };
 	export let Ed25519PublicKey: Uint8Array;
 	export let wallet: handlers;
-	export let srcTx: string | null;
+	export let srcTx: string | null = 'SoPGF6d-5oLy6-uKpJD2J2tT0ytM9LsXWbP5YQnVT6Q'; // https://sonar.warp.cc/#/app/source/SoPGF6d-5oLy6-uKpJD2J2tT0ytM9LsXWbP5YQnVT6Q#code
 
 	let didar: DIDAr;
 	let did: string;
@@ -68,7 +69,7 @@
 		{/key}
 
 		{#if !creating && !existing && handleCreateDID}
-			<div class="m-4 p-4">
+			<div class="m-4">
 				{#if srcTx}
 					Using existing contract <span class="font-mono bg-gray-50 m-2 p-2 rounded">
 						<a
@@ -87,9 +88,7 @@
 				on:click={handleCreateDID}
 				on:keypress={handleCreateDID}
 			>
-				Use wallet keys to Create new Decentralized Identity, deployed on {local
-					? 'local'
-					: process.env.NODE_ENV}
+				Create Decentralized Identity (DID) with Wallet Keys
 			</div>
 		{:else if creating}
 			<Spinner>Creating DID...</Spinner>
@@ -99,4 +98,4 @@
 	Connect with Wallet to create a Decentralized Identity
 {/if}
 
-<!-- <style lang="postcss"></style> -->
+<style lang="postcss"></style>
