@@ -1,5 +1,5 @@
 <div class="flex flex-row items-center">
-	<div class="spinner" />
+	<div class="spinner select-none" />
 	<div class="flex-1">
 		<slot />
 	</div>
@@ -17,6 +17,9 @@
 	}
 	.items-center {
 		align-items: center;
+	}
+	.select-none {
+		user-select: none;
 	}
 	.spinner {
 		aspect-ratio: 1;
