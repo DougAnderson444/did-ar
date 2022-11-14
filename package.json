@@ -1,6 +1,6 @@
 {
 	"name": "@peerpiper/did-ar",
-	"version": "0.0.18",
+	"version": "0.0.19",
 	"main": "index.js",
 	"module": "index.js",
 	"scripts": {
@@ -55,7 +55,7 @@
 		"did-resolver": "^4.0.0",
 		"multiformats": "^9.9.0",
 		"svelte-json-tree": "^1.0.0",
-		"warp-contracts": "^1.2.12"
+		"warp-contracts": "^1.2.18"
 	},
 	"repository": {
 		"type": "git",
