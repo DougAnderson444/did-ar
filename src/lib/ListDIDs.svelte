@@ -66,5 +66,3 @@
 		{/if}
 	{/each}
 {/if}
-
-<style lang="postcss"></style>
