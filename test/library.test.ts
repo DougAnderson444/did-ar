@@ -43,7 +43,7 @@ describe('Testing did:ar:*', () => {
 		]);
 
 		didar = await init({ local: true }); // if no wallet set, will use_wallet
-		({ jwk: wallet, address } = await didar.warp.testing.generateWallet());
+		({ jwk: wallet, address } = await didar.warp.generateWallet());
 		didar.wallet = wallet; // override 'use_wallet' and set to funded wallet for testing
 
 		did = await didar.create({
@@ -86,7 +86,7 @@ describe('Testing did:ar:*', () => {
 
 		// update with a didAr with a new wallet in it
 		didar2 = await init({ local: true }); // if no wallet set, will use_wallet
-		const { jwk: wallet2, address: address2 } = await didar.warp.testing.generateWallet();
+		const { jwk: wallet2, address: address2 } = await didar.warp.generateWallet();
 		didar2.wallet = wallet2; // override 'use_wallet' and set to funded wallet for testing
 
 		did2 = await didar.create({
